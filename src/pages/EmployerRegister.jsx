@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import img from '../assets/image.png'
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
-const SignUp = () => {
-    const [role, setRole] = useState("employee");
+const EmployerRegister = () => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
@@ -21,24 +20,11 @@ const SignUp = () => {
     //   };
 
   return (
-    <div className="flex">
-      <div className="w-1/2 h-screen flex flex-col justify-center items-center">
-            <img src={img} alt="LaborLedger" className="w-2/5" />
-            <h1 className="text-5xl pt-6">LaborLedger</h1>
-      </div>
-
-      <div className="w-1/2 flex justify-center items-center p-6 text-lg">
-        <div className="p-6 w-3/4">
-          <h2 className="text-3xl font-semibold mb-8 text-[#EDAA76]">Register Here</h2>
-          <select 
-           value={role} 
-           onChange={(e) => setRole(e.target.value)} 
-           className="w-full p-3.5 mb-4 border border-gray-300 rounded-xl"
-         >
-           <option>Select the Role</option>
-           <option value="employee">Employee</option>
-           <option value="employer">Employer</option>
-         </select>
+    <div className="">
+      <Navbar />
+      <div className="flex justify-center items-center p-6 text-xl">
+        <div className="pt-10">
+          <h2 className="text-4xl font-semibold pb-10 text-[#EDAA76]">Employer Register</h2>
           <form>
             <div className="flex gap-5">
                 <input
@@ -48,7 +34,7 @@ const SignUp = () => {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
-                  className="w-full p-3 mb-4 border border-gray-300 rounded-xl"
+                  className="w-full p-4 mb-6 border border-gray-300 rounded-xl"
                 />
                 <input
                   type="text"
@@ -57,7 +43,7 @@ const SignUp = () => {
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   required
-                  className="w-full p-3 mb-4 border border-gray-300 rounded-xl"
+                  className="w-full p-4 mb-6 border border-gray-300 rounded-xl"
                 />
             </div>
             <input
@@ -67,7 +53,7 @@ const SignUp = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full p-3 mb-4 border border-gray-300 rounded-xl"
+              className="w-full p-4 mb-6 border border-gray-300 rounded-xl"
             />
             <input
                 type="password"
@@ -76,7 +62,7 @@ const SignUp = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full p-3 mb-4 border border-gray-300 rounded-xl pr-10"
+                className="w-full p-4 mb-6 border border-gray-300 rounded-xl pr-10"
               />
             <div className="relative w-full">
               <input
@@ -86,12 +72,12 @@ const SignUp = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="w-full p-3 mb-4 border border-gray-300 rounded-xl pr-10"
+                className="w-full p-4 mb-6 border border-gray-300 rounded-xl pr-10"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute top-4 right-5 text-gray-500 text-xl"
+                className="absolute top-5 right-5 text-gray-500 text-xl"
               >
                 {showPassword ? <FaEye /> : <FaEyeSlash />}
               </button>
@@ -99,12 +85,12 @@ const SignUp = () => {
 
             <button 
               type="submit" 
-              className="w-full font-medium p-3 bg-gradient-to-r from-[#FFD3B1] via-[#F3A76D] to-[#EDAA76] rounded-xl cursor-pointer"
+              className="w-full font-medium p-4 bg-gradient-to-r from-[#FFD3B1] via-[#F3A76D] to-[#EDAA76] rounded-xl cursor-pointer"
             >
               Register
             </button>
           </form>
-          <Link to='/'>
+          <Link to='/employerLogin'>
                 <h1 className="text-gray-500 text-md pt-4 text-center">Already have an account? <span className="text-[#EDAA76] underline cursor-pointer">Sign In</span></h1>
             </Link>
         </div>
@@ -113,4 +99,4 @@ const SignUp = () => {
   )
 }
 
-export default SignUp
+export default EmployerRegister
