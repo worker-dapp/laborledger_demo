@@ -30,8 +30,8 @@ const WhyLaborLedger = () => {
         <div className="w-full md:w-1/3 flex justify-center">
           <Lottie 
             options={defaultOptions(paymentAnimation)} 
-            height={250}   // Reduced height
-            width={250}    // Reduced width
+            height={250}
+            width={250}
           />
         </div>
 
