@@ -1,1 +1,1 @@
-Labour Ledger
+Labor Ledger

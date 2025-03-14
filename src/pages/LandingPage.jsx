@@ -14,7 +14,7 @@ const LandingPage = () => {
       
       {/* Main Content */}
       <div className="flex flex-col items-center text-center px-6 py-20">
-        <h1 className="text-6xl md:text-7xl font-extrabold text-gray-900">
+        <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900">
           Welcome to <span className="text-[#E08A44]">LaborLedger</span>
         </h1>
         <h3 className="text-lg text-gray-700 mt-3">
