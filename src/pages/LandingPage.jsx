@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom'
 import Footer from '../components/Footer'
 import WhyLaborLadger from '../components/WhyLaborLadger'
 
+import employerImg from '../assets/employer.jpg'
+import employeeImg from '../assets/jobs.jpg' 
+
 const LandingPage = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6]">
@@ -15,7 +18,7 @@ const LandingPage = () => {
           Welcome to <span className="text-[#E08A44]">LaborLedger</span>
         </h1>
         <h3 className="text-lg text-gray-700 mt-3">
-          Choose your role to create an account or sign in.
+          Choose your role and create an account or sign in.
         </h3>
 
         {/* Cards Section */}
@@ -23,6 +26,7 @@ const LandingPage = () => {
           
           {/* Employer Card */}
           <div className="p-10 rounded-3xl shadow-2xl border border-gray-100 bg-white/80 backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] flex flex-col items-center text-center">
+            <img src={employerImg} alt="Employer" className="w-24 h-24 md:w-32 md:h-32 object-contain mb-4" />
             <h3 className="text-2xl md:text-3xl font-semibold text-gray-900">
               I’m an Employer
             </h3>
@@ -38,6 +42,7 @@ const LandingPage = () => {
 
           {/* Employee Card */}
           <div className="p-10 rounded-3xl shadow-2xl border border-gray-100 bg-white/80 backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] flex flex-col items-center text-center">
+            <img src={employeeImg} alt="Employee" className="w-24 h-24 md:w-32 md:h-32 object-contain mb-4" />
             <h3 className="text-2xl md:text-3xl font-semibold text-gray-900">
               I’m an Employee
             </h3>
