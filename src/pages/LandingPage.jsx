@@ -12,10 +12,10 @@ const LandingPage = () => {
       {/* Main Content */}
       <div className="flex flex-col items-center text-center px-6 py-20">
         <h1 className="text-6xl md:text-7xl font-extrabold text-gray-900">
-          Join <span className="text-[#E08A44]">LaborLedger</span>
+          Welcome to <span className="text-[#E08A44]">LaborLedger</span>
         </h1>
         <h3 className="text-lg text-gray-700 mt-3">
-          Choose your role to get started.
+          Choose your role to create an account or sign in.
         </h3>
 
         {/* Cards Section */}
@@ -31,7 +31,7 @@ const LandingPage = () => {
             </p>
             <Link to='/employerRegister' className="w-full">
               <button className="mt-6 bg-gradient-to-r from-[#FFB07F] via-[#FFA062] to-[#E08A44] text-white font-medium px-6 py-3 rounded-lg w-full transition-all hover:shadow-lg hover:brightness-110">
-                Register →
+                Create a Contract →
               </button>
             </Link>
           </div>
@@ -42,11 +42,11 @@ const LandingPage = () => {
               I’m an Employee
             </h3>
             <p className="text-gray-700 mt-2 text-sm md:text-base">
-              Find opportunities that match your skills.
+              Find opportunities that suit your needs.
             </p>
             <Link to='/employeeRegister' className="w-full">
               <button className="mt-6 bg-gradient-to-r from-[#FFB07F] via-[#FFA062] to-[#E08A44] text-white font-medium px-6 py-3 rounded-lg w-full transition-all hover:shadow-lg hover:brightness-110">
-                Register →
+                Find a Job →
               </button>
             </Link>
           </div>
