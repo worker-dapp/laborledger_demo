@@ -6,38 +6,54 @@ import WhyLaborLadger from '../components/WhyLaborLadger'
 
 const LandingPage = () => {
   return (
-    <div className=''>
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6]">
       <Navbar />
-      <div className='flex flex-col p-36 gap-20'>
-        <div className='flex flex-col gap-4'>
-          <h1 className='text-6xl font-semibold'>Join The LaborLedger</h1>
-          <h3 className='text-lg'>Please select an option below.</h3>
-        </div>
+      
+      {/* Main Content */}
+      <div className="flex flex-col items-center text-center px-6 py-20">
+        <h1 className="text-6xl md:text-7xl font-extrabold text-gray-900">
+          Join <span className="text-[#E08A44]">LaborLedger</span>
+        </h1>
+        <h3 className="text-lg text-gray-700 mt-3">
+          Choose your role to get started.
+        </h3>
 
-        <div className="flex gap-10">
-          <div className="shadow-lg p-8 rounded-2xl border border-gray-200 w-full">
-            <h3 className="text-4xl">
-              I'm a Employer
+        {/* Cards Section */}
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl">
+          
+          {/* Employer Card */}
+          <div className="p-10 rounded-3xl shadow-2xl border border-gray-100 bg-white/80 backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] flex flex-col items-center text-center">
+            <h3 className="text-2xl md:text-3xl font-semibold text-gray-900">
+              I’m an Employer
             </h3>
-            <Link to='/employerRegister'>
-              <button className="mt-20 bg-gradient-to-r from-[#FFD3B1] via-[#FED0AC] to-[#EDAA76] cursor-pointer px-4 py-3 rounded-lg w-full">
+            <p className="text-gray-700 mt-2 text-sm md:text-base">
+              Find and hire the best workers with ease.
+            </p>
+            <Link to='/employerRegister' className="w-full">
+              <button className="mt-6 bg-gradient-to-r from-[#FFB07F] via-[#FFA062] to-[#E08A44] text-white font-medium px-6 py-3 rounded-lg w-full transition-all hover:shadow-lg hover:brightness-110">
                 Register →
               </button>
             </Link>
           </div>
 
-          <div className="shadow-lg p-8 rounded-2xl border border-gray-200 w-full">
-            <h3 className="text-4xl">
-              I'm a Employee
+          {/* Employee Card */}
+          <div className="p-10 rounded-3xl shadow-2xl border border-gray-100 bg-white/80 backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] flex flex-col items-center text-center">
+            <h3 className="text-2xl md:text-3xl font-semibold text-gray-900">
+              I’m an Employee
             </h3>
-            <Link to='/employeeRegister'>
-              <button className="mt-20 bg-gradient-to-r from-[#FFD3B1] via-[#FED0AC] to-[#EDAA76] cursor-pointer px-4 py-3 rounded-lg w-full">
+            <p className="text-gray-700 mt-2 text-sm md:text-base">
+              Find opportunities that match your skills.
+            </p>
+            <Link to='/employeeRegister' className="w-full">
+              <button className="mt-6 bg-gradient-to-r from-[#FFB07F] via-[#FFA062] to-[#E08A44] text-white font-medium px-6 py-3 rounded-lg w-full transition-all hover:shadow-lg hover:brightness-110">
                 Register →
               </button>
             </Link>
           </div>
+
         </div>
       </div>
+      
       <WhyLaborLadger />
       <Footer />
     </div>
