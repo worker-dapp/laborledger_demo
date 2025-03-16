@@ -23,7 +23,7 @@ const Dispute = () => {
           type="text"
           placeholder="Search disputes..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(event) => setSearch(event.target.value)}
           className="w-full p-5 text-xl mb-4 rounded-2xl shadow-2xl border border-gray-100 bg-white/80 backdrop-blur-lg"
         />
         <div className="space-y-4">
@@ -34,7 +34,7 @@ const Dispute = () => {
               <div className="mt-3 flex space-x-4">
                 <button
                   onClick={() => alert(`Resolving dispute ${dispute.id}`)}
-                  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600b cursor-pointer"
+                  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 cursor-pointer"
                 >
                   Resolve
                 </button>
