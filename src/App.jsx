@@ -13,6 +13,8 @@ import Dispute from './pages/Dispute'
 import Payments from './pages/Payments'
 import NewJob from './pages/NewJob'
 import JobDetails from './pages/JobDetails'
+import MyJobs from './pages/MyJobs'
+import MyJobDetails from './pages/MyJobDetails'
 
 const App = () => {
   return (
@@ -31,7 +33,8 @@ const App = () => {
         <Route path='/payments' element={<Payments />} />
         <Route path='/new-job' element={<NewJob />} />
         <Route path='/job-details/:jobId' element={<JobDetails />} />
-
+        <Route path='/my-jobs' element={<MyJobs />} />
+        <Route path="/my-jobs/:jobId" element={<MyJobDetails />} />
       </Routes>
     </div>
   )

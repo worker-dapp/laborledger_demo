@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Navbar from '../components/Navbar'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const JobDetails = () => {
   // Sample array of jobs (same as in EmployeeDashboard)
+  const [accpeted, setAccepted] = useState("Accept")
+  const navigtate = useNavigate()
   const jobs = [
     {
       id: 1,
@@ -47,18 +49,29 @@ const JobDetails = () => {
     return <div>Job not found!</div>
   }
 
+  const handleAccept = () => {
+    setAccepted("Accepted")
+    setTimeout(() => {
+      navigtate('/my-jobs')
+    }, 1000)
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6]">
       <Navbar />
-      <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md mt-8">
+      <div className="w-1/2 mx-auto pt-20">
         <h2 className="text-3xl font-bold mb-4">{job.name} - Detailed Information</h2>
         
         <p className="text-lg mb-2"><strong>Description:</strong> {job.description}</p>
         <p className="text-lg mb-2"><strong>Schedule:</strong> {job.schedule}</p>
         <p className="text-lg mb-2"><strong>Location:</strong> {job.location}</p>
         <p className="text-lg mb-2"><strong>Salary:</strong> {job.salary}</p>
-        <p className="text-lg mb-4"><strong>Requirements:</strong> {job.requirements}</p>
-        <p className="text-lg mb-4"><strong>Benefits:</strong> {job.benefits}</p>
+        <p className="text-lg mb-2"><strong>Requirements:</strong> {job.requirements}</p>
+        <p className="text-lg mb-2"><strong>Benefits:</strong> {job.benefits}</p>
+        <div className='bg-orange-500 cursor-pointer text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-all shadow-md text-lg text-center mt-6 w-1/3'
+            onClick={handleAccept}>
+          {accpeted}
+        </div>
       </div>
     </div>
   );

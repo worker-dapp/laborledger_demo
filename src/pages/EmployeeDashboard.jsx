@@ -35,7 +35,10 @@ const EmployeeDashboard = () => {
     <div className="min-h-screen bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6] pb-20">
       <Navbar />
       <div>
-        <div className="text-3xl text-center p-12">Welcome Name!</div>
+        <div className='relative '>
+          <div className="text-3xl text-center p-12">Welcome Name!</div>
+          <Link to='/my-jobs' className='absolute right-20 top-12 text-xl'>My Jobs</Link>
+        </div>
         
         {/* Job List Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 w-full px-6 lg:px-36">
