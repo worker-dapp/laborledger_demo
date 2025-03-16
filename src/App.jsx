@@ -11,6 +11,8 @@ import EmployerDashboard from './pages/EmployerDashboard'
 import ViewEmployees from './pages/ViewEmployees'
 import Dispute from './pages/Dispute'
 import Payments from './pages/Payments'
+import NewJob from './pages/NewJob'
+import JobDetails from './pages/JobDetails'
 
 const App = () => {
   return (
@@ -27,6 +29,9 @@ const App = () => {
         <Route path='/view-employees' element={<ViewEmployees />} />
         <Route path='/dispute' element={<Dispute />} />
         <Route path='/payments' element={<Payments />} />
+        <Route path='/new-job' element={<NewJob />} />
+        <Route path='/job-details/:jobId' element={<JobDetails />} />
+
       </Routes>
     </div>
   )

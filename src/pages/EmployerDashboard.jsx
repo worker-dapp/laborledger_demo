@@ -21,7 +21,7 @@ const EmployerDashboard = () => {
             <Link to='/dispute' className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-white/80 backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900">
                 Dispute Resolution
             </Link>
-            <Link to='/dispute' className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-white/80 backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900">
+            <Link to='/new-job' className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-white/80 backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900">
                 Post a New Job
             </Link>
           </div>
