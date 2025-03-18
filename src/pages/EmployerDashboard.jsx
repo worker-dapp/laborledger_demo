@@ -9,20 +9,26 @@ const EmployerDashboard = () => {
         <div>
           <div className='text-3xl text-center p-12'>Welcome Name!</div>
           <div className='flex flex-wrap justify-center gap-12 p-12'>
+          <Link to='/new-job' className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-white/80 backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900">
+                Create New Contract
+            </Link>
             <Link to='/view-employees' className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-white/80 backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900">
-                View All Employees
+                Review Applications
             </Link>
-            <Link to='/dispute' className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-white/80 backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900">
-                View Schedules
-            </Link>
-            <Link to='/payments' className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-white/80 backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900">
-                Payments
-            </Link>
-            <Link to='/dispute' className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-white/80 backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900">
-                Dispute Resolution
+            <Link to='/view-employees' className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-white/80 backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900">
+                View Open Contracts
             </Link>
             <Link to='/new-job' className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-white/80 backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900">
-                Post a New Job
+                Review Completed Contracts
+            </Link>
+            {/* <Link to='/payments' className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-white/80 backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900">
+                View Closed Contracts
+            </Link> */}
+            <Link to='/dispute' className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-white/80 backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900">
+                View Ongoing Disputes
+            </Link>
+            <Link to='/payments' className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-white/80 backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900">
+                View Closed Contracts
             </Link>
           </div>
         </div>
