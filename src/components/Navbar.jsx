@@ -3,6 +3,7 @@ import { NavLink, Link } from 'react-router-dom';
 
 const Navbar = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [user, setUser] = useState(null); // Replace with authentication logic
   const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -21,7 +22,7 @@ const Navbar = () => {
   return (
     <div className='w-full bg-[#FFD3B1]/20 font-medium shadow-md'>
       <div className='flex items-center justify-between px-20 py-5'>
-        
+
         {/* Enhanced Brand Name */}
         <Link to='/' className='text-4xl font-extrabold tracking-wide'>
           <span className='text-gray-900 hover:text-orange-600 transition-all'>Labor</span>
@@ -39,30 +40,37 @@ const Navbar = () => {
             About Us
           </NavLink>
 
-          {/* Dropdown Menu for Sign In */}
-          <div className='relative' ref={dropdownRef}>
-            <button 
-              onClick={() => setDropdownOpen(!isDropdownOpen)} 
-              className='bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-all shadow-md text-lg flex items-center justify-center'>
-              Sign In
-            </button>
+          {/* Conditionally Render Sign In or Profile */}
+          {user ? (
+            <Link 
+              to={user.role === 'employee' ? '/employee-profile' : '/employer-profile'} 
+              className='bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-all shadow-md text-lg'>
+              Profile
+            </Link>
+          ) : (
+            <div className='relative' ref={dropdownRef}>
+              <button 
+                onClick={() => setDropdownOpen(!isDropdownOpen)} 
+                className='bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-all shadow-md text-lg'>
+                Sign In
+              </button>
 
-            {isDropdownOpen && (
-              <div className='absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg rounded-lg'>
-                <Link 
-                  to='/employeeDashboard' 
-                  className='block px-4 py-2 text-gray-900 hover:bg-orange-100 transition-all rounded-t-lg'>
-                  Employee
-                </Link>
-                <Link 
-                  to='/employerDashboard' 
-                  className='block px-4 py-2 text-gray-900 hover:bg-orange-100 transition-all rounded-b-lg'>
-                  Employer
-                </Link>
-              </div>
-            )}
-          </div>
-
+              {isDropdownOpen && (
+                <div className='absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg rounded-lg'>
+                  <Link 
+                    to='/employeeDashboard' 
+                    className='block px-4 py-2 text-gray-900 hover:bg-orange-100 transition-all rounded-t-lg'>
+                    Employee
+                  </Link>
+                  <Link 
+                    to='/employerDashboard' 
+                    className='block px-4 py-2 text-gray-900 hover:bg-orange-100 transition-all rounded-b-lg'>
+                    Employer
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
