@@ -26,29 +26,29 @@ const WorkerOnboardingForm = () => {
   });
 
   // 2) Prefill the form fields + signers with any available jobData
-  useEffect(() => {
-    if (jobData) {
-      // Prefill your worker data
-      setWorkerData((prev) => ({
-        ...prev,
-        contractTitle: jobData.title || "",
-        location: jobData.location || "",
-        paymentRate: jobData.salary || "",
-        firstName: jobData.manager || "",
-        paymentFrequency: jobData.schedule || "",
-      }));
+  // useEffect(() => {
+  //   if (jobData) {
+  //     // Prefill your worker data
+  //     setWorkerData((prev) => ({
+  //       ...prev,
+  //       contractTitle: jobData.title || "",
+  //       location: jobData.location || "",
+  //       paymentRate: jobData.salary || "",
+  //       firstName: jobData.manager || "",
+  //       paymentFrequency: jobData.schedule || "",
+  //     }));
 
-      // If jobData has an "applicants" array, we can prefill signers
-      if (Array.isArray(jobData.applicants) && jobData.applicants.length > 0) {
-        const mappedSigners = jobData.applicants.map((applicant) => ({
-          name: applicant.name || "",
-          walletAddress: applicant.walletAddress || "",
-          isLocked: true,
-        }));
-        setSigners(mappedSigners);
-      }
-    }
-  }, [jobData]);
+  //     // If jobData has an "applicants" array, we can prefill signers
+  //     if (Array.isArray(jobData.applicants) && jobData.applicants.length > 0) {
+  //       const mappedSigners = jobData.applicants.map((applicant) => ({
+  //         name: applicant.name || "",
+  //         walletAddress: applicant.walletAddress || "",
+  //         isLocked: true,
+  //       }));
+  //       setSigners(mappedSigners);
+  //     }
+  //   }
+  // }, [jobData]);
 
   // Handle changes in the workerData fields
   const handleChange = (e) => {
@@ -170,7 +170,7 @@ const WorkerOnboardingForm = () => {
               className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
               value={workerData.firstName}
               onChange={handleChange}
-              disabled={Boolean(jobData?.manager)}
+              // disabled={Boolean(jobData?.manager)}
             />
             {/* <input
               type="text"
@@ -205,7 +205,7 @@ const WorkerOnboardingForm = () => {
           <h3 className="text-xl font-bold mb-3 mt-6">Payment Details</h3>
 
           <div className="mb-4">
-            {/* <label className="block mb-2">Payment Frequency</label>
+            <label className="block mb-2">Payment Frequency</label>
             <select
               value={paymentFrequency}
               onChange={(e) => setPaymentFrequency(e.target.value)}
@@ -214,15 +214,15 @@ const WorkerOnboardingForm = () => {
               <option value="Hourly">Hourly</option>
               <option value="Daily">Daily</option>
               <option value="Weekly">Weekly</option>
-            </select> */}
-            <input
+            </select>
+            {/* <input
               type="text"
               placeholder="Payment Frequency"
               name="paymentFrequency"
               className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
               value={workerData.paymentFrequency}
               onChange={handleChange}
-            />
+            /> */}
           </div>
 
           {workerType === "Milestone" ? (

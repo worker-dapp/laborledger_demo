@@ -187,7 +187,7 @@ const EmployerJobPortal = () => {
             <button className="mt-4 w-full bg-orange-500 text-white px-4 py-2 rounded-full shadow-md hover:bg-orange-600">
             <Link 
               to="/new-job" 
-              state={{ jobData: job }} 
+              // state={{ jobData: job }} 
             >
               Create New Contract
             </Link>
