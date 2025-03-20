@@ -17,6 +17,7 @@ import MyJobs from './pages/MyJobs'
 import MyJobDetails from './pages/MyJobDetails'
 import EmployerProfile from './pages/EmployerProfile'
 import EmployeeProfile from './pages/EmployeeProfile'
+import EmployerJobPortal from './pages/EmployerJobPortal'
 
 const App = () => {
   return (
@@ -39,6 +40,7 @@ const App = () => {
         <Route path="/my-jobs/:jobId" element={<MyJobDetails />} />
         <Route path="/employer-profile" element={<EmployerProfile />} />
         <Route path="/employee-profile" element={<EmployeeProfile />} />
+        <Route path="/create-job" element={<EmployerJobPortal />} />
       </Routes>
     </div>
   )
