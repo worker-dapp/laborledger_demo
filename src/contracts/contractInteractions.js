@@ -1,9 +1,9 @@
 import { ethers } from "ethers";
-import GPSBasedPaymentABI from "./GPSBasedPayment.json";  // Make sure this is in `src/contracts/`
-import GPSOracleABI from "./GPSOracle.json";  // Make sure this is in `src/contracts/`
+import GPSBasedPaymentABI from "./GPSBasedPayment.json";
+import GPSOracleABI from "./GPSOracle.json";
 
-const contractAddress = "0xE7B08F308BfBF36c752d1376C32914791ecA8514"; // Replace with your contract
-const oracleAddress = "0xB420dDcE21dA14AF756e418984018c5cFAC62Ded"; // Replace with actual deployed Oracle address
+const contractAddress = "0xE7B08F308BfBF36c752d1376C32914791ecA8514";
+const oracleAddress = "0xB420dDcE21dA14AF756e418984018c5cFAC62Ded";
 
 export const getBlockchainContracts = async () => {
   if (!window.ethereum) {
