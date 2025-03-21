@@ -1,21 +1,27 @@
 // WorkerOnboardingForm.jsx
 
 import React, { useState, useEffect } from "react";
-// Import your Supabase client here:
+import { useLocation, useNavigate } from "react-router-dom";
 import supabase from "../supabaseClient";
-import { useLocation } from "react-router-dom";
 
 const WorkerOnboardingForm = () => {
-  // 1) Grabbing the jobData from React Router
+  // --------------------------------------------------------------------------
+  // React Router
+  // --------------------------------------------------------------------------
   const location = useLocation();
   const jobData = location.state?.jobData;
+  const navigate = useNavigate();
 
+  // --------------------------------------------------------------------------
+  // States
+  // --------------------------------------------------------------------------
   const [workerType, setWorkerType] = useState("Custom Payment");
   const [paymentFrequency, setPaymentFrequency] = useState("");
   const [signers, setSigners] = useState([{ name: "", walletAddress: "" }]);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
+  // Form Data
   const [workerData, setWorkerData] = useState({
     contractTitle: "",
     firstName: "",
@@ -29,20 +35,24 @@ const WorkerOnboardingForm = () => {
     paymentFrequency: "",
   });
 
-  // Handle changes in the workerData fields
+  // Loader & Error Handling
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  // --------------------------------------------------------------------------
+  // Handlers
+  // --------------------------------------------------------------------------
   const handleChange = (e) => {
     const { name, value } = e.target;
     setWorkerData({ ...workerData, [name]: value });
   };
 
-  // Handle changes in milestones
   const handleMilestoneChange = (index, field, value) => {
     const updatedMilestones = [...workerData.milestones];
     updatedMilestones[index][field] = value;
     setWorkerData({ ...workerData, milestones: updatedMilestones });
   };
 
-  // Add a new milestone row
   const addMilestone = () => {
     setWorkerData({
       ...workerData,
@@ -50,7 +60,6 @@ const WorkerOnboardingForm = () => {
     });
   };
 
-  // Signers
   const addSigner = () => {
     setSigners([...signers, { name: "", walletAddress: "" }]);
   };
@@ -61,7 +70,7 @@ const WorkerOnboardingForm = () => {
     setSigners(updatedSigners);
   };
 
-  // Terms & Conditions Modal logic
+  // Terms & Conditions
   const handleCheckboxChange = (e) => {
     e.preventDefault();
     setShowModal(true);
@@ -77,11 +86,15 @@ const WorkerOnboardingForm = () => {
   };
 
   // --------------------------------------------------------------------------
-  // CREATE A NEW RECORD IN "contracts" TABLE WHEN SUBMIT IS CLICKED
+  // Submit => Insert into "contracts"
   // --------------------------------------------------------------------------
   const handleSubmit = async () => {
+    // If you're using "required" validation in your UI, you might do extra checks here
+    setIsLoading(true);
+    setErrorMsg(""); // reset any prior errors
+
     try {
-      // Prepare the data to match the all-lowercase columns in the "contracts" table
+      // 1) Prepare the data to match your "contracts" table columns
       const newContract = {
         contracttitle: workerData.contractTitle,
         paymentfrequency: paymentFrequency,
@@ -94,23 +107,22 @@ const WorkerOnboardingForm = () => {
         paymentrate: workerData.paymentRate,
         milestones: workerData.milestones, 
         signers: signers, 
-        status: "Contract Created", // default status
+        status: "Contract Created",
       };
-  
-      // Insert the new contract into Supabase
+
+      // 2) Insert into Supabase
       const { data, error } = await supabase
         .from("contracts")
         .insert([newContract])
-        .select(); // returns the inserted row
-  
+        .select();
+
+      // 3) Check error or success
       if (error) {
         console.error("Error creating contract:", error);
-        alert("Failed to create contract. Please try again.");
+        setErrorMsg("Failed to create contract. Please try again.");
       } else {
         console.log("Contract created successfully:", data);
-        alert("🎉 Contract created successfully!");
-  
-        // Optional: reset form
+        // 4) Reset form
         setWorkerData({
           contractTitle: "",
           firstName: "",
@@ -126,19 +138,46 @@ const WorkerOnboardingForm = () => {
         setPaymentFrequency("");
         setSigners([{ name: "", walletAddress: "" }]);
         setAcceptedTerms(false);
+
+        // 5) Navigate to /create-job
+        navigate("/create-job");
       }
     } catch (err) {
       console.error("Unexpected error:", err);
-      alert("Something went wrong. Please try again.");
+      setErrorMsg("Something went wrong. Please try again.");
+    } finally {
+      // 6) Stop loader
+      setIsLoading(false);
     }
   };
-  
 
+  // --------------------------------------------------------------------------
+  // Render
+  // --------------------------------------------------------------------------
   return (
-    <div className="bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6] p-10 flex justify-center items-center min-h-screen">
+    <div className="bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6] p-10 flex justify-center items-center min-h-screen relative">
+      {/* LOADER OVERLAY */}
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="p-4 bg-white rounded shadow">
+            <p className="text-lg">Creating your contract...</p>
+            {/* You could add a spinner here, e.g. CSS spinner or library-based */}
+          </div>
+        </div>
+      )}
+
       <div className="w-full max-w-2xl">
         <h2 className="text-3xl font-bold text-center mb-6">Create Contract</h2>
-        <p className="text-center mb-6">Create the contract terms with this guided process</p>
+        <p className="text-center mb-6">
+          Create the contract terms with this guided process
+        </p>
+
+        {/* Optional error message display */}
+        {errorMsg && (
+          <div className="text-red-600 bg-red-100 p-3 mb-4 rounded">
+            {errorMsg}
+          </div>
+        )}
 
         {/* Full Form */}
         <div className="mt-4">
@@ -160,7 +199,9 @@ const WorkerOnboardingForm = () => {
             <button
               onClick={() => setWorkerType("Custom Payment")}
               className={`p-3 rounded-lg font-semibold ${
-                workerType === "Custom Payment" ? "bg-orange-600 text-white" : "bg-gray-200"
+                workerType === "Custom Payment"
+                  ? "bg-orange-600 text-white"
+                  : "bg-gray-200"
               }`}
             >
               Custom Payment
@@ -168,7 +209,9 @@ const WorkerOnboardingForm = () => {
             <button
               onClick={() => setWorkerType("Time Based")}
               className={`p-3 rounded-lg font-semibold ${
-                workerType === "Time Based" ? "bg-orange-600 text-white" : "bg-gray-200"
+                workerType === "Time Based"
+                  ? "bg-orange-600 text-white"
+                  : "bg-gray-200"
               }`}
             >
               Time Based
@@ -176,7 +219,9 @@ const WorkerOnboardingForm = () => {
             <button
               onClick={() => setWorkerType("Piece Rate Payment")}
               className={`p-3 rounded-lg font-semibold ${
-                workerType === "Piece Rate Payment" ? "bg-orange-600 text-white" : "bg-gray-200"
+                workerType === "Piece Rate Payment"
+                  ? "bg-orange-600 text-white"
+                  : "bg-gray-200"
               }`}
             >
               GPS Based
@@ -184,7 +229,9 @@ const WorkerOnboardingForm = () => {
             <button
               onClick={() => setWorkerType("Milestone")}
               className={`p-3 rounded-lg font-semibold ${
-                workerType === "Milestone" ? "bg-orange-600 text-white" : "bg-gray-200"
+                workerType === "Milestone"
+                  ? "bg-orange-600 text-white"
+                  : "bg-gray-200"
               }`}
             >
               Milestone Based
@@ -246,14 +293,18 @@ const WorkerOnboardingForm = () => {
                     type="text"
                     placeholder="Milestone Name"
                     value={milestone.milestone}
-                    onChange={(e) => handleMilestoneChange(index, "milestone", e.target.value)}
+                    onChange={(e) =>
+                      handleMilestoneChange(index, "milestone", e.target.value)
+                    }
                     className="w-full p-3 mb-3 rounded-xl shadow border border-gray-400 bg-white/80"
                   />
                   <input
                     type="text"
                     placeholder="Amount"
                     value={milestone.amount}
-                    onChange={(e) => handleMilestoneChange(index, "amount", e.target.value)}
+                    onChange={(e) =>
+                      handleMilestoneChange(index, "amount", e.target.value)
+                    }
                     className="w-full p-3 mb-3 rounded-xl shadow border border-gray-400 bg-white/80"
                   />
                 </div>
@@ -291,7 +342,9 @@ const WorkerOnboardingForm = () => {
                 type="text"
                 placeholder="Wallet Address"
                 value={signer.walletAddress}
-                onChange={(e) => handleSignerChange(index, "walletAddress", e.target.value)}
+                onChange={(e) =>
+                  handleSignerChange(index, "walletAddress", e.target.value)
+                }
                 className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
               />
             </div>
@@ -322,7 +375,7 @@ const WorkerOnboardingForm = () => {
           <button
             onClick={handleSubmit}
             className="bg-gradient-to-r from-[#FFB07F] via-[#FFA062] to-[#E08A44] text-white font-medium px-6 py-3 rounded-lg w-full transition-all hover:shadow-lg hover:brightness-110"
-            disabled={!acceptedTerms}
+            disabled={!acceptedTerms || isLoading}
           >
             Submit
           </button>
@@ -334,8 +387,9 @@ const WorkerOnboardingForm = () => {
             <div className="bg-white w-11/12 md:w-1/2 p-6 rounded shadow-lg relative">
               <h2 className="text-2xl font-bold mb-4">Terms &amp; Conditions</h2>
               <p className="mb-6">
-                By agreeing to these terms and conditions, you are entering into a legally
-                binding contract with the employer. Please read the following carefully.
+                By agreeing to these terms and conditions, you are entering into a
+                legally binding contract with the employer. Please read the following
+                carefully.
               </p>
               <div className="flex justify-end gap-4">
                 <button
