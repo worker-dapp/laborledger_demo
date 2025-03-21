@@ -139,8 +139,7 @@ const WorkerOnboardingForm = () => {
         setSigners([{ name: "", walletAddress: "" }]);
         setAcceptedTerms(false);
 
-        // 5) Navigate to /create-job
-        navigate("/create-job");
+        navigate("//view-employees");
       }
     } catch (err) {
       console.error("Unexpected error:", err);
