@@ -1,135 +1,140 @@
 import React, { useState, useEffect } from "react";
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import supabase from "../supabaseClient";
 
 const EmployerJobPortal = () => {
   // --------------------------------------------------------------------------
   // STATE
   // --------------------------------------------------------------------------
-  const [jobs, setJobs] = useState([]);
-  const [filteredJobs, setFilteredJobs] = useState([]);
+  const [contracts, setContracts] = useState([]);
+  const [filteredContracts, setFilteredContracts] = useState([]);
 
-  // Modals
-  const [openPostJobModal, setOpenPostJobModal] = useState(false);
-  const [openApplicantsModal, setOpenApplicantsModal] = useState(false);
-  const [selectedApplicants, setSelectedApplicants] = useState([]);
-
-  // New Job form
-  const [newJob, setNewJob] = useState({
-    title: "",
-    description: "",
-    type: "",
-    schedule: "",
-    manager: "",
-    location: "",
-    salary: "",
-    applicants: [],
-  });
-
-  // Filters
+  // For filtering (optional)
   const [showFilters, setShowFilters] = useState(false);
   const [searchTitle, setSearchTitle] = useState("");
-  const [jobTypeFilters, setJobTypeFilters] = useState({
-    fullTime: false,
-    partTime: false,
-    contract: false,
-  });
+  const [statusFilter, setStatusFilter] = useState("");
+
+  // Modal to view signers
+  const [openSignersModal, setOpenSignersModal] = useState(false);
+  // We will store the *entire* selected contract here
+  const [selectedContract, setSelectedContract] = useState(null);
 
   // --------------------------------------------------------------------------
-  // INITIAL FETCH
+  // FETCH CONTRACTS
   // --------------------------------------------------------------------------
   useEffect(() => {
-    const fetchJobs = async () => {
-      const { data, error } = await supabase.from("jobs").select("*");
+    const fetchContracts = async () => {
+      const { data, error } = await supabase.from("contracts").select("*");
       if (error) {
-        console.error("Error fetching jobs:", error);
+        console.error("Error fetching contracts:", error);
       } else {
-        setJobs(data || []);
-        setFilteredJobs(data || []);
+        setContracts(data || []);
+        setFilteredContracts(data || []);
       }
     };
-    fetchJobs();
+    fetchContracts();
   }, []);
 
   // --------------------------------------------------------------------------
   // FILTERING LOGIC
   // --------------------------------------------------------------------------
   useEffect(() => {
-    filterJobs();
+    filterContracts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTitle, jobTypeFilters, jobs]);
+  }, [searchTitle, statusFilter, contracts]);
 
-  const filterJobs = () => {
-    let updated = [...jobs];
+  const filterContracts = () => {
+    let updated = [...contracts];
 
-    // 1. Filter by job title
+    // 1. Filter by contracttitle
     if (searchTitle.trim() !== "") {
-      updated = updated.filter((job) =>
-        job.title.toLowerCase().includes(searchTitle.toLowerCase())
+      updated = updated.filter((contract) =>
+        contract.contracttitle?.toLowerCase().includes(searchTitle.toLowerCase())
       );
     }
 
-    // 2. Filter by job type
-    const { fullTime, partTime, contract } = jobTypeFilters;
-    const anyTypeSelected = fullTime || partTime || contract;
-    if (anyTypeSelected) {
-      updated = updated.filter((job) => {
-        const jobType = job.type?.toLowerCase();
-        if (fullTime && jobType === "full-time") return true;
-        if (partTime && jobType === "part-time") return true;
-        if (contract && jobType === "contract") return true;
-        return false;
-      });
+    // 2. Filter by status
+    if (statusFilter.trim() !== "") {
+      updated = updated.filter(
+        (contract) => contract.status?.toLowerCase() === statusFilter.toLowerCase()
+      );
     }
 
-    setFilteredJobs(updated);
-  };
-
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setJobTypeFilters((prev) => ({
-      ...prev,
-      [name]: checked,
-    }));
+    setFilteredContracts(updated);
   };
 
   // --------------------------------------------------------------------------
-  // JOB APPLICANTS
+  // VIEW SIGNERS (Open Modal)
   // --------------------------------------------------------------------------
-  const handleViewApplicants = (applicants) => {
-    setSelectedApplicants(applicants);
-    setOpenApplicantsModal(true);
+  const handleViewSigners = (contract) => {
+    // Set the entire contract in state so we know which one we're working with
+    setSelectedContract(contract);
+    setOpenSignersModal(true);
   };
 
   // --------------------------------------------------------------------------
-  // POSTING A NEW JOB
+  // HANDLE CHECKBOX CHANGE FOR SIGNERS
   // --------------------------------------------------------------------------
-  const handlePostJob = async () => {
-    const { title, description, type, schedule, manager, location, salary } = newJob;
+  const handleSignerCheck = (index, isChecked) => {
+    if (!selectedContract) return;
 
-    if (!title || !description || !type || !schedule || !manager || !location || !salary) {
-      alert("All fields are required!");
+    // Copy the signers array, update the "isChecked" property
+    const updatedSigners = [...(selectedContract.signers || [])];
+    updatedSigners[index] = {
+      ...updatedSigners[index],
+      isChecked: isChecked,
+    };
+
+    // Update the contract in state with the new signers array
+    setSelectedContract({
+      ...selectedContract,
+      signers: updatedSigners,
+    });
+  };
+
+  // --------------------------------------------------------------------------
+  // SAVE CONTRACT STATUS (set "pending") + Updated Signers
+  // --------------------------------------------------------------------------
+  const handleSave = async () => {
+    if (!selectedContract) return;
+
+    // Optional check: only set status to 'pending' if at least one signer is checked
+    const anyChecked = (selectedContract.signers || []).some((s) => s.isChecked);
+
+    if (!anyChecked) {
+      alert("No signers were selected. Please check at least one signer.");
       return;
     }
 
-    const { data, error } = await supabase.from("jobs").insert([newJob]).select();
-    if (error) {
-      console.error("Error posting job:", error);
-    } else if (data) {
-      // Update local state
-      setJobs([...jobs, data[0]]);
-      // Close modal & reset form
-      setOpenPostJobModal(false);
-      setNewJob({
-        title: "",
-        description: "",
-        type: "",
-        schedule: "",
-        manager: "",
-        location: "",
-        salary: "",
-        applicants: [],
-      });
+    try {
+      // Update the contract in supabase => from "Contract Created" to "pending"
+      const { data, error } = await supabase
+        .from("contracts")
+        .update({
+          status: "pending",
+          signers: selectedContract.signers, // if you want to persist the updated signers
+        })
+        .eq("id", selectedContract.id)
+        .select();
+
+      if (error) {
+        console.error("Error updating contract:", error);
+        alert("Could not update contract status!");
+      } else if (data && data.length > 0) {
+        // Update local state
+        const updated = data[0]; // the updated contract from Supabase
+        setContracts((prev) =>
+          prev.map((c) => (c.id === updated.id ? updated : c))
+        );
+        setFilteredContracts((prev) =>
+          prev.map((c) => (c.id === updated.id ? updated : c))
+        );
+        // alert("Contract status updated to 'pending'!");
+        setOpenSignersModal(false);
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      alert("Something went wrong!");
     }
   };
 
@@ -137,61 +142,53 @@ const EmployerJobPortal = () => {
   // RENDER
   // --------------------------------------------------------------------------
   return (
-    <div className="relative min-h-screen p-6 bg-gray-100">
+    <div className="relative min-h-screen p-6 bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6]">
       {/* TOP BAR */}
       <div className="max-w-5xl mx-auto flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-orange-600">Job Dashboard</h1>
-        <button
-          className="bg-orange-500 text-white px-6 py-2 rounded-full shadow-md hover:bg-orange-600"
-          onClick={() => setOpenPostJobModal(true)}
+        <h1 className="text-3xl font-bold text-orange-600">View Contracts</h1>
+
+        {/* Button or Link to create new contract */}
+        <Link
+          to="/new-job"
+          className="bg-orange-500 text-white px-6 py-2 rounded-full shadow-md hover:bg-orange-600 inline-block text-center"
         >
-          Post a New Job
-        </button>
+          Create a new Contract
+        </Link>
       </div>
 
-      {/* JOB LISTINGS (FILTERED) */}
+      {/* CONTRACT LISTINGS (FILTERED) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-        {filteredJobs.map((job) => (
+        {filteredContracts.map((contract) => (
           <div
-            key={job.id}
+            key={contract.id}
             className="bg-white p-4 rounded-lg shadow-md border-l-4 border-orange-500"
           >
-            <h2 className="text-lg font-bold text-orange-600 mb-2">{job.title}</h2>
-            <p className="text-gray-700 mb-1">
-              <strong>Description:</strong> {job.description}
+            <h2 className="text-lg font-bold text-orange-600 mb-2">
+              {contract.contracttitle}
+            </h2>
+            <p className="text-sm text-gray-600">
+              <strong>Payment Rate:</strong> {contract.paymentrate}
             </p>
             <p className="text-sm text-gray-600">
-              <strong>Type:</strong> {job.type}
+              <strong>Payment Frequency:</strong> {contract.paymentfrequency}
             </p>
             <p className="text-sm text-gray-600">
-              <strong>Schedule:</strong> {job.schedule}
+              <strong>Location:</strong> {contract.location}
             </p>
             <p className="text-sm text-gray-600">
-              <strong>Manager:</strong> {job.manager}
+              <strong>Status:</strong> {contract.status}
             </p>
             <p className="text-sm text-gray-600">
-              <strong>Location:</strong> {job.location}
+              <strong>Applicants:</strong>{" "}
+              {Array.isArray(contract.signers) ? contract.signers.length : 0}
             </p>
-            <p className="text-sm text-gray-600">
-              <strong>Salary:</strong> {job.salary}
-            </p>
-            <p className="text-sm text-gray-600">
-              <strong>Applicants:</strong> {job.applicants?.length || 0}
-            </p>
+
+            {/* Button to see signers */}
             <button
               className="mt-4 w-full bg-orange-500 text-white px-4 py-2 rounded-full shadow-md hover:bg-orange-600"
-              onClick={() => handleViewApplicants(job.applicants)}
+              onClick={() => handleViewSigners(contract)}
             >
               View Applicants
-            </button>
-            <button className="mt-4 w-full bg-orange-500 text-white px-4 py-2 rounded-full shadow-md hover:bg-orange-600">
-            <Link 
-              to="/new-job" 
-              // state={{ jobData: job }} 
-            >
-              Create New Contract
-            </Link>
-
             </button>
           </div>
         ))}
@@ -200,7 +197,6 @@ const EmployerJobPortal = () => {
       {/* FILTER BUTTON IN UPPER LEFT CORNER */}
       <button
         onClick={() => setShowFilters(!showFilters)}
-        // Position near top-left. Adjust `top`/`left` as needed.
         className="absolute top-6 left-6 w-12 h-12 rounded-full bg-white shadow-md border 
                    flex items-center justify-center text-orange-500 hover:bg-orange-50"
       >
@@ -221,63 +217,48 @@ const EmployerJobPortal = () => {
         </svg>
       </button>
 
-      {/* FILTER PANEL (NOT COVERING THE WHOLE PAGE) */}
+      {/* FILTER PANEL */}
       {showFilters && (
         <div
           className="absolute top-20 left-6 w-64 bg-white p-4 rounded shadow-md border 
                      transition-all"
-          style={{ zIndex: 9999 }} // Make sure it's above other elements
+          style={{ zIndex: 9999 }}
         >
           <h2 className="text-xl font-bold mb-4">Filters</h2>
 
           {/* Search by Title */}
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1" htmlFor="searchTitle">
-              Search Job Title
+              Search Contract Title
             </label>
             <input
               id="searchTitle"
               type="text"
-              placeholder="e.g. Developer"
+              placeholder="e.g. My Contract"
               className="w-full p-2 border rounded"
               value={searchTitle}
               onChange={(e) => setSearchTitle(e.target.value)}
             />
           </div>
 
-          {/* Job Type Checkboxes */}
+          {/* Status Filter Example */}
           <div className="mb-4">
-            <h3 className="text-sm font-medium mb-2">Job Type</h3>
-            <label className="flex items-center mb-1">
-              <input
-                type="checkbox"
-                name="fullTime"
-                checked={jobTypeFilters.fullTime}
-                onChange={handleCheckboxChange}
-                className="mr-2"
-              />
-              Full-time
+            <label className="block text-sm font-medium mb-1" htmlFor="statusFilter">
+              Status
             </label>
-            <label className="flex items-center mb-1">
-              <input
-                type="checkbox"
-                name="partTime"
-                checked={jobTypeFilters.partTime}
-                onChange={handleCheckboxChange}
-                className="mr-2"
-              />
-              Part-time
-            </label>
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                name="contract"
-                checked={jobTypeFilters.contract}
-                onChange={handleCheckboxChange}
-                className="mr-2"
-              />
-              Contract
-            </label>
+            <select
+              id="statusFilter"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="w-full p-2 border rounded"
+            >
+              <option value="">-- Any Status --</option>
+              <option value="draft">Draft</option>
+              <option value="Contract Created">Contract Created</option>
+              <option value="pending">Pending</option>
+              <option value="active">Active</option>
+              <option value="completed">Completed</option>
+            </select>
           </div>
 
           <button
@@ -289,99 +270,44 @@ const EmployerJobPortal = () => {
         </div>
       )}
 
-      {/* POST JOB MODAL */}
-      {openPostJobModal && (
+      {/* VIEW SIGNERS MODAL */}
+      {openSignersModal && selectedContract && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 className="text-xl font-bold text-orange-600 mb-4">Post a New Job</h2>
-            <input
-              type="text"
-              placeholder="Job Title"
-              className="w-full p-2 border rounded mb-2"
-              value={newJob.title}
-              onChange={(e) => setNewJob({ ...newJob, title: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Description"
-              className="w-full p-2 border rounded mb-2"
-              value={newJob.description}
-              onChange={(e) => setNewJob({ ...newJob, description: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Type (Full-time, Part-time, Contract, etc.)"
-              className="w-full p-2 border rounded mb-2"
-              value={newJob.type}
-              onChange={(e) => setNewJob({ ...newJob, type: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Schedule"
-              className="w-full p-2 border rounded mb-2"
-              value={newJob.schedule}
-              onChange={(e) => setNewJob({ ...newJob, schedule: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Manager"
-              className="w-full p-2 border rounded mb-2"
-              value={newJob.manager}
-              onChange={(e) => setNewJob({ ...newJob, manager: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Location"
-              className="w-full p-2 border rounded mb-2"
-              value={newJob.location}
-              onChange={(e) => setNewJob({ ...newJob, location: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Salary"
-              className="w-full p-2 border rounded mb-2"
-              value={newJob.salary}
-              onChange={(e) => setNewJob({ ...newJob, salary: e.target.value })}
-            />
-            <button
-              className="mt-4 w-full bg-orange-500 text-white px-4 py-2 rounded-full shadow-md hover:bg-orange-600"
-              onClick={handlePostJob}
-            >
-              Post Job
-            </button>
-            <button
-              className="mt-2 w-full bg-gray-500 text-white px-4 py-2 rounded-full shadow-md hover:bg-gray-600"
-              onClick={() => setOpenPostJobModal(false)}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
+            <h2 className="text-xl font-bold text-orange-600 mb-4">Signers</h2>
 
-      {/* VIEW APPLICANTS MODAL */}
-      {openApplicantsModal && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 className="text-xl font-bold text-orange-600 mb-4">Applicants</h2>
-            {selectedApplicants && selectedApplicants.length > 0 ? (
-              <ul className="list-disc ml-5">
-                {selectedApplicants.map((applicant, index) => (
-                  <li key={index} className="mb-2">
-                    {/* Customize how you display applicant data here */}
-                    {applicant.name} - {applicant.email}
+            {Array.isArray(selectedContract.signers) && selectedContract.signers.length > 0 ? (
+              <ul className="list-none ml-1">
+                {selectedContract.signers.map((signer, index) => (
+                  <li key={index} className="mb-2 flex items-center">
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                      checked={signer.isChecked || false}
+                      onChange={(e) => handleSignerCheck(index, e.target.checked)}
+                    />
+                    <span>{signer.name} - {signer.walletAddress}</span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p>No applicants yet.</p>
+              <p>No signers yet.</p>
             )}
-            <button
-              className="mt-4 w-full bg-gray-500 text-white px-4 py-2 rounded-full shadow-md hover:bg-gray-600"
-              onClick={() => setOpenApplicantsModal(false)}
-            >
-              Close
-            </button>
+
+            <div className="flex justify-end gap-4 mt-6">
+              <button
+                className="border border-gray-300 px-4 py-2 rounded"
+                onClick={() => setOpenSignersModal(false)}
+              >
+                Close
+              </button>
+              <button
+                className="bg-orange-600 text-white px-4 py-2 rounded"
+                onClick={handleSave}
+              >
+                Save
+              </button>
+            </div>
           </div>
         </div>
       )}

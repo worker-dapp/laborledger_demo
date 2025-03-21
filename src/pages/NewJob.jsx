@@ -1,4 +1,8 @@
+// WorkerOnboardingForm.jsx
+
 import React, { useState, useEffect } from "react";
+// Import your Supabase client here:
+import supabase from "../supabaseClient";
 import { useLocation } from "react-router-dom";
 
 const WorkerOnboardingForm = () => {
@@ -25,31 +29,6 @@ const WorkerOnboardingForm = () => {
     paymentFrequency: "",
   });
 
-  // 2) Prefill the form fields + signers with any available jobData
-  // useEffect(() => {
-  //   if (jobData) {
-  //     // Prefill your worker data
-  //     setWorkerData((prev) => ({
-  //       ...prev,
-  //       contractTitle: jobData.title || "",
-  //       location: jobData.location || "",
-  //       paymentRate: jobData.salary || "",
-  //       firstName: jobData.manager || "",
-  //       paymentFrequency: jobData.schedule || "",
-  //     }));
-
-  //     // If jobData has an "applicants" array, we can prefill signers
-  //     if (Array.isArray(jobData.applicants) && jobData.applicants.length > 0) {
-  //       const mappedSigners = jobData.applicants.map((applicant) => ({
-  //         name: applicant.name || "",
-  //         walletAddress: applicant.walletAddress || "",
-  //         isLocked: true,
-  //       }));
-  //       setSigners(mappedSigners);
-  //     }
-  //   }
-  // }, [jobData]);
-
   // Handle changes in the workerData fields
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -71,7 +50,7 @@ const WorkerOnboardingForm = () => {
     });
   };
 
-  // Add or remove signers
+  // Signers
   const addSigner = () => {
     setSigners([...signers, { name: "", walletAddress: "" }]);
   };
@@ -84,7 +63,6 @@ const WorkerOnboardingForm = () => {
 
   // Terms & Conditions Modal logic
   const handleCheckboxChange = (e) => {
-    // We open the modal instead of directly setting acceptedTerms
     e.preventDefault();
     setShowModal(true);
   };
@@ -98,11 +76,63 @@ const WorkerOnboardingForm = () => {
     setShowModal(false);
   };
 
-  // Form Submit
-  const handleSubmit = () => {
-    console.log("Form submitted with data:", workerData, "Signers:", signers);
-    // Add your submission logic (e.g., sending to server or Supabase)
+  // --------------------------------------------------------------------------
+  // CREATE A NEW RECORD IN "contracts" TABLE WHEN SUBMIT IS CLICKED
+  // --------------------------------------------------------------------------
+  const handleSubmit = async () => {
+    try {
+      // Prepare the data to match the all-lowercase columns in the "contracts" table
+      const newContract = {
+        contracttitle: workerData.contractTitle,
+        paymentfrequency: paymentFrequency,
+        firstname: workerData.firstName,
+        lastname: workerData.lastName,
+        email: workerData.email,
+        phone: workerData.phone,
+        walletaddress: workerData.walletAddress,
+        location: workerData.location,
+        paymentrate: workerData.paymentRate,
+        milestones: workerData.milestones, 
+        signers: signers, 
+        status: "Contract Created", // default status
+      };
+  
+      // Insert the new contract into Supabase
+      const { data, error } = await supabase
+        .from("contracts")
+        .insert([newContract])
+        .select(); // returns the inserted row
+  
+      if (error) {
+        console.error("Error creating contract:", error);
+        alert("Failed to create contract. Please try again.");
+      } else {
+        console.log("Contract created successfully:", data);
+        alert("🎉 Contract created successfully!");
+  
+        // Optional: reset form
+        setWorkerData({
+          contractTitle: "",
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          walletAddress: "",
+          location: "",
+          paymentRate: "",
+          milestones: [{ milestone: "", amount: "" }],
+          paymentFrequency: "",
+        });
+        setPaymentFrequency("");
+        setSigners([{ name: "", walletAddress: "" }]);
+        setAcceptedTerms(false);
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      alert("Something went wrong. Please try again.");
+    }
   };
+  
 
   return (
     <div className="bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6] p-10 flex justify-center items-center min-h-screen">
@@ -170,16 +200,7 @@ const WorkerOnboardingForm = () => {
               className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
               value={workerData.firstName}
               onChange={handleChange}
-              // disabled={Boolean(jobData?.manager)}
             />
-            {/* <input
-              type="text"
-              placeholder="Last Name"
-              name="lastName"
-              className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
-              value={workerData.lastName}
-              onChange={handleChange}
-            /> */}
           </div>
 
           <div className="flex gap-4 mb-4">
@@ -203,7 +224,6 @@ const WorkerOnboardingForm = () => {
 
           {/* Payment Details */}
           <h3 className="text-xl font-bold mb-3 mt-6">Payment Details</h3>
-
           <div className="mb-4">
             <label className="block mb-2">Payment Frequency</label>
             <select
@@ -211,18 +231,11 @@ const WorkerOnboardingForm = () => {
               onChange={(e) => setPaymentFrequency(e.target.value)}
               className="w-full p-3 mb-3 rounded-xl shadow border border-gray-400 bg-white/80"
             >
+              <option value="">-- Select Frequency --</option>
               <option value="Hourly">Hourly</option>
               <option value="Daily">Daily</option>
               <option value="Weekly">Weekly</option>
             </select>
-            {/* <input
-              type="text"
-              placeholder="Payment Frequency"
-              name="paymentFrequency"
-              className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
-              value={workerData.paymentFrequency}
-              onChange={handleChange}
-            /> */}
           </div>
 
           {workerType === "Milestone" ? (
@@ -233,18 +246,14 @@ const WorkerOnboardingForm = () => {
                     type="text"
                     placeholder="Milestone Name"
                     value={milestone.milestone}
-                    onChange={(e) =>
-                      handleMilestoneChange(index, "milestone", e.target.value)
-                    }
+                    onChange={(e) => handleMilestoneChange(index, "milestone", e.target.value)}
                     className="w-full p-3 mb-3 rounded-xl shadow border border-gray-400 bg-white/80"
                   />
                   <input
                     type="text"
                     placeholder="Amount"
                     value={milestone.amount}
-                    onChange={(e) =>
-                      handleMilestoneChange(index, "amount", e.target.value)
-                    }
+                    onChange={(e) => handleMilestoneChange(index, "amount", e.target.value)}
                     className="w-full p-3 mb-3 rounded-xl shadow border border-gray-400 bg-white/80"
                   />
                 </div>
@@ -282,9 +291,7 @@ const WorkerOnboardingForm = () => {
                 type="text"
                 placeholder="Wallet Address"
                 value={signer.walletAddress}
-                onChange={(e) =>
-                  handleSignerChange(index, "walletAddress", e.target.value)
-                }
+                onChange={(e) => handleSignerChange(index, "walletAddress", e.target.value)}
                 className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
               />
             </div>
