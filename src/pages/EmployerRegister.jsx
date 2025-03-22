@@ -23,41 +23,58 @@ const EmployerRegister = () => {
         setError("");
         setSuccess("");
 
+        if (!firstName || !lastName || !email || !password || !confirmPassword) {
+            setError("All fields are required.");
+            return;
+        }
+
         if (password.length < 8) {
             setError("Password must be at least 8 characters long.");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            setError("Passwords do not match.");
             return;
         }
 
         setLoading(true);
 
         try {
-            // Insert employer details into the Supabase table
-            const { error: dbError } = await supabase
-                .from("employers")
-                .insert([{ 
+            const { data, error: authError } = await supabase.auth.signUp({
+                email: email.trim().toLowerCase(),
+                password,
+            });
+    
+            if (authError) throw authError;
+    
+            const { error: dbError } = await supabase.from("employers").insert([
+                { 
+                    id: data.user.id,
                     first_name: firstName, 
                     last_name: lastName,  
-                    email 
-                }]);
-
+                    email: email.trim().toLowerCase(),
+                    password,
+                    role: "employer",
+                }
+            ]);
+    
             if (dbError) throw dbError;
 
-            setSuccess("Employer registered successfully!");
+            setSuccess("Employee registered successfully!");
 
-            // Clear form fields
             setFirstName("");
             setLastName("");
             setEmail("");
             setPassword("");
             setConfirmPassword("");
 
-            // Redirect to login page after 2 seconds
             setTimeout(() => {
                 navigate("/employerLogin");
             }, 2000);
 
         } catch (err) {
-            setError(err.message);
+            setError(err.message || "An error occurred. Please try again.");
         } finally {
             setLoading(false);
         }

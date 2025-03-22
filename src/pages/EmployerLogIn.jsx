@@ -26,12 +26,11 @@ const EmployerLogIn = () => {
         setLoading(true);
 
         try {
-            // ✅ Fetch employer details from Supabase table
             const { data: employer, error: fetchError } = await supabase
                 .from("employers")
-                .select("id, email, password") // Ensure we get necessary fields
+                .select("id, email, password, role") 
                 .eq("email", email.trim().toLowerCase())
-                .maybeSingle(); // Get a single matching record
+                .maybeSingle(); 
 
             if (fetchError) throw fetchError;
 
@@ -44,7 +43,6 @@ const EmployerLogIn = () => {
             console.log("Stored Password:", employer.password);
             console.log("Entered Password:", password);
 
-            // ✅ Compare entered password with stored password (plain-text match)
             if (employer.password !== password) {
                 setError("Invalid email or password.");
                 setLoading(false);
@@ -53,7 +51,8 @@ const EmployerLogIn = () => {
 
             console.log("Login Successful for:", employer.email);
 
-            // ✅ Redirect to employer dashboard
+            localStorage.setItem("userRole", employer.role)
+
             navigate("/employerDashboard");
 
         } catch (err) {
