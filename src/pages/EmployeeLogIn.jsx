@@ -26,12 +26,12 @@ const EmployeeLogIn = () => {
         setLoading(true);
 
         try {
-            // ✅ Fetch employee details from Supabase table
+            
             const { data: employee, error: fetchError } = await supabase
                 .from("employees")
-                .select("id, email, password") // Ensure necessary fields
+                .select("id, email, password, role") 
                 .eq("email", email.trim().toLowerCase())
-                .maybeSingle(); // Ensure only one result
+                .maybeSingle(); 
 
             if (fetchError) throw fetchError;
 
@@ -41,10 +41,6 @@ const EmployeeLogIn = () => {
                 return;
             }
 
-            console.log("Stored Password:", employee.password);
-            console.log("Entered Password:", password);
-
-            // ✅ Compare entered password with stored password (plaintext match)
             if (employee.password !== password) {
                 setError("Invalid email or password.");
                 setLoading(false);
@@ -53,7 +49,8 @@ const EmployeeLogIn = () => {
 
             console.log("Login Successful for:", employee.email);
 
-            // ✅ Redirect to employee dashboard
+            localStorage.setItem("userRole", employee.role)
+
             navigate("/employeeDashboard");
 
         } catch (err) {
@@ -69,7 +66,6 @@ const EmployeeLogIn = () => {
             <Navbar />
             <div className="flex justify-center items-center p-6 flex-grow">
                 <div className="w-full max-w-lg p-10">
-                    {/* Centered Heading */}
                     <h2 className="text-5xl font-semibold text-center text-[#EDAA76] mb-8">
                         Employee Log In
                     </h2>
@@ -77,7 +73,6 @@ const EmployeeLogIn = () => {
                     {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
                     <form className="flex flex-col gap-6" onSubmit={handleLogin}>
-                        {/* Email */}
                         <input
                             type="email"
                             placeholder="Email"
@@ -87,7 +82,6 @@ const EmployeeLogIn = () => {
                             className="w-full p-4 border border-[#EDAA76] bg-transparent rounded-xl placeholder-gray-600 text-gray-900"
                         />
 
-                        {/* Password with Toggle */}
                         <div className="relative w-full">
                             <input
                                 type={showPassword ? "text" : "password"}
@@ -106,7 +100,6 @@ const EmployeeLogIn = () => {
                             </button>
                         </div>
 
-                        {/* Log In Button */}
                         <button 
                             type="submit" 
                             className="w-full font-medium p-4 bg-gradient-to-r from-[#FFD3B1] via-[#F3A76D] to-[#EDAA76] rounded-xl shadow-md transition-all hover:scale-105 hover:shadow-lg text-white"
@@ -116,7 +109,6 @@ const EmployeeLogIn = () => {
                         </button>
                     </form>
 
-                    {/* Register Link */}
                     <Link to='/employeeRegister'>
                         <h1 className="text-gray-700 text-md pt-6 text-center">
                             Don't have an account? 

@@ -41,28 +41,34 @@ const EmployeeRegister = () => {
         setLoading(true);
 
         try {
-            // ✅ Insert employee details into Supabase table
-            const { error: dbError } = await supabase
-                .from("employees")
-                .insert([{ 
+            const { data, error: authError } = await supabase.auth.signUp({
+                email: email.trim().toLowerCase(),
+                password,
+            });
+    
+            if (authError) throw authError;
+    
+            const { error: dbError } = await supabase.from("employees").insert([
+                { 
+                    id: data.user.id,
                     first_name: firstName, 
                     last_name: lastName,  
                     email: email.trim().toLowerCase(),
-                    password, // ⚠️ Plain text for now, needs hashing later
-                }]);
-
+                    password,
+                    role: "employee",
+                }
+            ]);
+    
             if (dbError) throw dbError;
 
             setSuccess("Employee registered successfully!");
 
-            // ✅ Clear form fields
             setFirstName("");
             setLastName("");
             setEmail("");
             setPassword("");
             setConfirmPassword("");
 
-            // ✅ Redirect to login page after 2 seconds
             setTimeout(() => {
                 navigate("/employeeLogin");
             }, 2000);
