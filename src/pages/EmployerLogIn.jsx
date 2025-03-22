@@ -52,6 +52,7 @@ const EmployerLogIn = () => {
             console.log("Login Successful for:", employer.email);
 
             localStorage.setItem("userRole", employer.role)
+            localStorage.setItem("userEmail", employer.email)
 
             navigate("/employerDashboard");
 

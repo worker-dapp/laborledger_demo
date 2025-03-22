@@ -33,9 +33,9 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = () => {
+    navigate('/')
     localStorage.removeItem('userRole');
     setUser(null);
-    navigate('/')
   };
 
   return (
