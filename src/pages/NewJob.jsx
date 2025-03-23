@@ -106,8 +106,8 @@ const WorkerOnboardingForm = () => {
         walletaddress: workerData.walletAddress,
         location: workerData.location,
         paymentrate: workerData.paymentRate,
-        milestones: workerData.milestones, 
-        signers: signers, 
+        milestones: workerData.milestones,
+        signers: signers,
         status: "Contract Created",
       };
 
@@ -155,9 +155,8 @@ const WorkerOnboardingForm = () => {
   // Render
   // --------------------------------------------------------------------------
   return (
-    <div className="bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6]">
+    <div className="bg-[#FFFFFF] p-10 flex justify-center items-center min-h-screen relative">
     <Navbar />
-    <div className="p-10 flex justify-center items-center min-h-screen relative">
       {/* LOADER OVERLAY */}
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50">
@@ -202,40 +201,36 @@ const WorkerOnboardingForm = () => {
               onClick={() => setWorkerType("Custom Payment")}
               className={`p-3 rounded-lg font-semibold ${
                 workerType === "Custom Payment"
-                  ? "bg-orange-600 text-white"
-                  : "bg-gray-200"
-              }`}
-            >
+                  ? "bg-[#EE964B] text-white"
+                  : "bg-[#FAF0CA] text-[#0D3B66]"
+              }`}>
               Custom Payment
             </button>
             <button
               onClick={() => setWorkerType("Time Based")}
               className={`p-3 rounded-lg font-semibold ${
                 workerType === "Time Based"
-                  ? "bg-orange-600 text-white"
-                  : "bg-gray-200"
-              }`}
-            >
+                  ? "bg-[#EE964B] text-white"
+                  : "bg-[#FAF0CA] text-[#0D3B66]"
+              }`}>
               Time Based
             </button>
             <button
               onClick={() => setWorkerType("Piece Rate Payment")}
               className={`p-3 rounded-lg font-semibold ${
                 workerType === "Piece Rate Payment"
-                  ? "bg-orange-600 text-white"
-                  : "bg-gray-200"
-              }`}
-            >
+                  ? "bg-[#EE964B] text-white"
+                  : "bg-[#FAF0CA] text-[#0D3B66]"
+              }`}>
               GPS Based
             </button>
             <button
               onClick={() => setWorkerType("Milestone")}
               className={`p-3 rounded-lg font-semibold ${
                 workerType === "Milestone"
-                  ? "bg-orange-600 text-white"
-                  : "bg-gray-200"
-              }`}
-            >
+                  ? "bg-[#EE964B] text-white"
+                  : "bg-[#FAF0CA] text-[#0D3B66]"
+              }`}>
               Milestone Based
             </button>
           </div>
@@ -278,8 +273,7 @@ const WorkerOnboardingForm = () => {
             <select
               value={paymentFrequency}
               onChange={(e) => setPaymentFrequency(e.target.value)}
-              className="w-full p-3 mb-3 rounded-xl shadow border border-gray-400 bg-white/80"
-            >
+              className="w-full p-3 mb-3 rounded-xl shadow border border-gray-400 bg-white/80">
               <option value="">-- Select Frequency --</option>
               <option value="Hourly">Hourly</option>
               <option value="Daily">Daily</option>
@@ -313,8 +307,7 @@ const WorkerOnboardingForm = () => {
               ))}
               <button
                 onClick={addMilestone}
-                className="w-full p-3 mb-3 rounded-xl shadow border border-gray-400 bg-white/80"
-              >
+                className="w-full p-3 mb-3 rounded-xl shadow border border-gray-400 bg-white/80">
                 Add Milestone
               </button>
             </>
@@ -337,7 +330,9 @@ const WorkerOnboardingForm = () => {
                 type="text"
                 placeholder="Full Name"
                 value={signer.name}
-                onChange={(e) => handleSignerChange(index, "name", e.target.value)}
+                onChange={(e) =>
+                  handleSignerChange(index, "name", e.target.value)
+                }
                 className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
               />
               <input
@@ -353,8 +348,7 @@ const WorkerOnboardingForm = () => {
           ))}
           <button
             onClick={addSigner}
-            className="px-4 py-2 border border-gray-300 rounded text-orange-600"
-          >
+            className="px-4 py-2 border border-gray-300 rounded  text-[#EE964B]">
             + Add Signer
           </button>
 
@@ -376,9 +370,8 @@ const WorkerOnboardingForm = () => {
           {/* Submit Button */}
           <button
             onClick={handleSubmit}
-            className="bg-gradient-to-r from-[#FFB07F] via-[#FFA062] to-[#E08A44] text-white font-medium px-6 py-3 rounded-lg w-full transition-all hover:shadow-lg hover:brightness-110"
-            disabled={!acceptedTerms || isLoading}
-          >
+            className="bg-gradient-to-r from-[#FFB07F] via-[#FFA062] to-[#EE964B] text-white font-medium px-6 py-3 rounded-lg w-full transition-all hover:shadow-lg hover:brightness-110"
+            disabled={!acceptedTerms || isLoading}>
             Submit
           </button>
         </div>
@@ -387,23 +380,23 @@ const WorkerOnboardingForm = () => {
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white w-11/12 md:w-1/2 p-6 rounded shadow-lg relative">
-              <h2 className="text-2xl font-bold mb-4">Terms &amp; Conditions</h2>
+              <h2 className="text-2xl font-bold mb-4">
+                Terms &amp; Conditions
+              </h2>
               <p className="mb-6">
-                By agreeing to these terms and conditions, you are entering into a
-                legally binding contract with the employer. Please read the following
-                carefully.
+                By agreeing to these terms and conditions, you are entering into
+                a legally binding contract with the employer. Please read the
+                following carefully.
               </p>
               <div className="flex justify-end gap-4">
                 <button
                   onClick={handleCloseModal}
-                  className="border border-gray-300 px-4 py-2 rounded"
-                >
+                  className="border border-gray-300 px-4 py-2 rounded">
                   Close
                 </button>
                 <button
                   onClick={handleAcceptTerms}
-                  className="bg-orange-600 text-white px-4 py-2 rounded"
-                >
+                  className="bg-orange-600 text-white px-4 py-2 rounded">
                   Accept Terms
                 </button>
               </div>
