@@ -22,7 +22,7 @@ const Navbar = () => {
 
   return (
     <div className="w-full bg-[#0D3B66] shadow-md">
-      <div className="flex items-center justify-between px-20 py-3">
+      <div className="max-w-7xl w-full mx-auto flex flex-wrap items-center justify-between px-4 sm:px-8 py-3 gap-y-3">
         {/* Enhanced Brand Name */}
         <Link
           to="/"
