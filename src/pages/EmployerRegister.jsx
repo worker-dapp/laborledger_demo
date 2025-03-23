@@ -5,158 +5,159 @@ import Navbar from "../components/Navbar";
 import supabase from "../supabaseClient";
 
 const EmployerRegister = () => {
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    // Handle Registration
-    const handleRegister = async (e) => {
-        e.preventDefault();
-        setError("");
-        setSuccess("");
+  // Handle Registration
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
 
-        if (password.length < 8) {
-            setError("Password must be at least 8 characters long.");
-            return;
-        }
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      return;
+    }
 
-        setLoading(true);
+    setLoading(true);
 
-        try {
-            // Insert employer details into the Supabase table
-            const { error: dbError } = await supabase
-                .from("employers")
-                .insert([{ 
-                    first_name: firstName, 
-                    last_name: lastName,  
-                    email 
-                }]);
+    try {
+      // Insert employer details into the Supabase table
+      const { error: dbError } = await supabase.from("employers").insert([
+        {
+          first_name: firstName,
+          last_name: lastName,
+          email,
+        },
+      ]);
 
-            if (dbError) throw dbError;
+      if (dbError) throw dbError;
 
-            setSuccess("Employer registered successfully!");
+      setSuccess("Employer registered successfully!");
 
-            // Clear form fields
-            setFirstName("");
-            setLastName("");
-            setEmail("");
-            setPassword("");
-            setConfirmPassword("");
+      // Clear form fields
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
 
-            // Redirect to login page after 2 seconds
-            setTimeout(() => {
-                navigate("/employerLogin");
-            }, 2000);
+      // Redirect to login page after 2 seconds
+      setTimeout(() => {
+        navigate("/employerLogin");
+      }, 2000);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
+  return (
+    <div className="min-h-screen bg-[#FFF9E5]  flex flex-col">
+      <Navbar />
+      <div className="flex justify-center items-center p-6 flex-grow">
+        <div className="w-full max-w-lg p-10">
+          {/* Centered Heading */}
+          <h2 className="text-5xl font-semibold text-center text-[#0D3B66] mb-8">
+            Employer Register
+          </h2>
 
-    return (
-        <div className="min-h-screen bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6] flex flex-col">
-            <Navbar />
-            <div className="flex justify-center items-center p-6 flex-grow">
-                <div className="w-full max-w-lg p-10">
-                    {/* Centered Heading */}
-                    <h2 className="text-5xl font-semibold text-center text-[#EDAA76] mb-8">
-                        Employer Register
-                    </h2>
+          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+          {success && (
+            <p className="text-green-500 text-center mb-4">{success}</p>
+          )}
 
-                    {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-                    {success && <p className="text-green-500 text-center mb-4">{success}</p>}
-
-                    <form className="flex flex-col gap-6" onSubmit={handleRegister}>
-                        {/* First & Last Name */}
-                        <div className="flex flex-col md:flex-row gap-5">
-                            <input
-                                type="text"
-                                placeholder="First Name"
-                                value={firstName}
-                                onChange={(e) => setFirstName(e.target.value)}
-                                required
-                                className="w-full p-4 border border-[#EDAA76] bg-transparent rounded-xl placeholder-gray-600 text-gray-900"
-                            />
-                            <input
-                                type="text"
-                                placeholder="Last Name"
-                                value={lastName}
-                                onChange={(e) => setLastName(e.target.value)}
-                                required
-                                className="w-full p-4 border border-[#EDAA76] bg-transparent rounded-xl placeholder-gray-600 text-gray-900"
-                            />
-                        </div>
-
-                        {/* Email */}
-                        <input
-                            type="email"
-                            placeholder="Email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            className="w-full p-4 border border-[#EDAA76] bg-transparent rounded-xl placeholder-gray-600 text-gray-900"
-                        />
-
-                        {/* Password */}
-                        <input
-                            type="password"
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            className="w-full p-4 border border-[#EDAA76] bg-transparent rounded-xl placeholder-gray-600 text-gray-900"
-                        />
-
-                        {/* Confirm Password with Toggle */}
-                        <div className="relative w-full">
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                placeholder="Confirm Password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                required
-                                className="w-full p-4 border border-[#EDAA76] bg-transparent rounded-xl placeholder-gray-600 text-gray-900 pr-12"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute top-5 right-5 text-[#EDAA76] text-xl"
-                            >
-                                {showPassword ? <FaEye /> : <FaEyeSlash />}
-                            </button>
-                        </div>
-
-                        {/* Register Button */}
-                        <button 
-                            type="submit" 
-                            className="w-full font-medium p-4 bg-gradient-to-r from-[#FFD3B1] via-[#F3A76D] to-[#EDAA76] rounded-xl shadow-md transition-all hover:scale-105 hover:shadow-lg text-white"
-                            disabled={loading}
-                        >
-                            {loading ? "Registering..." : "Register"}
-                        </button>
-                    </form>
-
-                    {/* Sign In Link */}
-                    <Link to='/employerLogin'>
-                        <h1 className="text-gray-700 text-md pt-6 text-center">
-                            Already have an account? 
-                            <span className="text-[#EDAA76] underline cursor-pointer ml-1">Sign In</span>
-                        </h1>
-                    </Link>
-                </div>
+          <form className="flex flex-col gap-6" onSubmit={handleRegister}>
+            {/* First & Last Name */}
+            <div className="flex flex-col md:flex-row gap-5">
+              <input
+                type="text"
+                placeholder="First Name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+                className="w-full p-4 border border-[#F4D35E] bg-transparent rounded-xl placeholder-gray-600 text-gray-900"
+              />
+              <input
+                type="text"
+                placeholder="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+                className="w-full p-4 border border-[#F4D35E] bg-transparent rounded-xl placeholder-gray-600 text-gray-900"
+              />
             </div>
+
+            {/* Email */}
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full p-4 border border-[#F4D35E] bg-transparent rounded-xl placeholder-gray-600 text-gray-900"
+            />
+
+            {/* Password */}
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full p-4 border border-[#F4D35E] bg-transparent rounded-xl placeholder-gray-600 text-gray-900"
+            />
+
+            {/* Confirm Password with Toggle */}
+            <div className="relative w-full">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                className="w-full p-4 border border-[#F4D35E] bg-transparent rounded-xl placeholder-gray-600 text-gray-900 pr-12"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute top-5 right-5 text-[#EDAA76] text-xl">
+                {showPassword ? <FaEye /> : <FaEyeSlash />}
+              </button>
+            </div>
+
+            {/* Register Button */}
+            <button
+              type="submit"
+              className="w-full font-medium p-4 bg-[#EE964B] hover:bg-[#d97b33] rounded-xl shadow-md transition-all hover:scale-105 hover:shadow-lg text-white"
+              disabled={loading}>
+              {loading ? "Registering..." : "Register"}
+            </button>
+          </form>
+
+          {/* Sign In Link */}
+          <Link to="/employerLogin">
+            <h1 className="text-gray-700 text-md pt-6 text-center">
+              Already have an account?
+              <span className="text-[#EDAA76] underline cursor-pointer ml-1">
+                Sign In
+              </span>
+            </h1>
+          </Link>
         </div>
-    );
-}
+      </div>
+    </div>
+  );
+};
 
 export default EmployerRegister;
