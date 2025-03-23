@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import supabase from "../supabaseClient";
 import Navbar from "../components/Navbar";
 
@@ -24,6 +24,7 @@ const EmployeeDashboard = () => {
       <Navbar />
       <div className="max-w-5xl mx-auto flex justify-between items-center mb-6">
         <h1 className="text-4xl p-10 font-bold text-orange-600">Available Jobs</h1>
+        <Link to='/my-jobs' className="text-4xl p-10 font-bold text-orange-600">My Jobs</Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 max-w-5xl mx-auto">

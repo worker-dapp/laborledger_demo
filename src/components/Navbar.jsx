@@ -33,7 +33,7 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = () => {
-    navigate('/')
+    navigate('/');
     localStorage.removeItem('userRole');
     setUser(null);
   };
@@ -49,8 +49,10 @@ const Navbar = () => {
 
         {/* Navigation */}
         <div className='flex items-center gap-12 text-lg'>
-          <NavLink to='/' className={({ isActive }) => 
-            `hover:text-orange-600 transition-all ${isActive ? 'text-orange-600 font-semibold' : 'text-gray-900'}`}>
+          <NavLink 
+            to={user === 'employee' ? '/employeeDashboard' : user === 'employer' ? '/employerDashboard' : '/'} 
+            className={({ isActive }) => 
+              `hover:text-orange-600 transition-all ${isActive ? 'text-orange-600 font-semibold' : 'text-gray-900'}`}>
             Home
           </NavLink>
           <NavLink to='/about-us' className={({ isActive }) => 
@@ -83,12 +85,12 @@ const Navbar = () => {
               {isDropdownOpen && (
                 <div className='absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg rounded-lg'>
                   <Link 
-                    to='/employeeDashboard' 
+                    to='/employeeLogin' 
                     className='block px-4 py-2 text-gray-900 hover:bg-orange-100 transition-all rounded-t-lg'>
                     Employee
                   </Link>
                   <Link 
-                    to='/employerDashboard' 
+                    to='/employerLogin' 
                     className='block px-4 py-2 text-gray-900 hover:bg-orange-100 transition-all rounded-b-lg'>
                     Employer
                   </Link>

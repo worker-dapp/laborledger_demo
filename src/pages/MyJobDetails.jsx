@@ -2,23 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';  
 import Navbar from '../components/Navbar';
 import GetLocation from '../components/GetLocation';
-
-const jobs = [
-    {
-        id: 1,
-        name: 'Software Engineer',
-        description: 'Develop and maintain software applications.',
-    },
-    {
-        id: 2,
-        name: 'Data Scientist',
-        description: 'Analyze and interpret complex data to provide insights.',
-    },
-];
+import supabase from "../supabaseClient";
 
 const MyJobDetails = () => {
-    const { jobId } = useParams(); 
-    const job = jobs.find((job) => job.id === parseInt(jobId)); 
+    const { id } = useParams();
+    const [contract, setContract] = useState(null);
 
     const { fetchLocation, location, loading, error } = GetLocation();
     const [punchInDetails, setPunchInDetails] = useState([]);
@@ -61,15 +49,43 @@ const MyJobDetails = () => {
         }
     }, [location, punchInDetails]);
 
+    useEffect(() => {
+        const fetchContract = async () => {
+          const { data, error } = await supabase
+            .from("contracts")
+            .select("*")
+            .eq("id", id)
+            .single();
+    
+          if (error) {
+            console.error("Error fetching contract:", error);
+          } else {
+            setContract(data);
+          }
+        };
+    
+        fetchContract();
+      }, [id]);
+
+      if (!contract) {
+        return (
+          <div className="min-h-screen bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6] flex justify-center items-center">
+            <h2 className="text-2xl text-orange-600">Contract not found</h2> {/* Handle case when contract is not found */}
+          </div>
+        );
+      }
+    
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6] pb-20">
             <Navbar />
-            <div className="text-3xl text-center p-12">{job?.name} Details</div>
+            <div className="text-4xl text-orange-600 font-bold text-center p-12">{contract.contracttitle} Details</div>
 
             <div className="w-2/3 mx-auto p-10">
-                <h3 className="text-xl font-semibold mb-4">{job?.name}</h3>
-                <p className="text-lg mb-4"><strong>Description:</strong> {job?.description}</p>
-
+                <p className="text-lg"><strong>Description:</strong></p>
+                <p className="text-lg"><strong>Payment Rate :</strong> {contract.paymentrate}</p>
+                <p className="text-lg"><strong>Payment Frequency :</strong> {contract.paymentfrequency}</p>
+                <p className="text-lg pb-5"><strong>Location :</strong> {contract.location}</p>
                 <button
                     onClick={handlePunchIn}
                     className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-xl transition"
