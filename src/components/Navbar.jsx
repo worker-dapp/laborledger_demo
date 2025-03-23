@@ -4,8 +4,21 @@ import logo from "../assets/Android.png";
 
 const Navbar = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const [user, setUser] = useState(null); // Replace with authentication logic
+  const [user, setUser] = useState(localStorage.getItem('userRole'));
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setUser(localStorage.getItem('userRole'));
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -19,6 +32,12 @@ const Navbar = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handleLogout = () => {
+    navigate('/');
+    localStorage.removeItem('userRole');
+    setUser(null);
+  };
 
   return (
     <div className="w-full bg-[#0D3B66] shadow-md">
@@ -58,7 +77,6 @@ const Navbar = () => {
             About Us
           </NavLink>
 
-          {/* Conditionally Render Sign In or Profile */}
           {user ? (
             <Link
               to={
@@ -80,12 +98,12 @@ const Navbar = () => {
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg rounded-lg">
                   <Link
-                    to="/employeeDashboard"
+                    to="/employeeLogin"
                     className="block px-4 py-2 text-[#0D3B66] hover:bg-[#FAF0CA] transition-all rounded-t-lg">
                     Employee
                   </Link>
                   <Link
-                    to="/employerDashboard"
+                    to="/employerLogin"
                     className="block px-4 py-2 text-[#0D3B66] hover:bg-[#FAF0CA] transition-all rounded-b-lg">
                     Employer
                   </Link>

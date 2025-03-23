@@ -1,100 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import supabase from "../supabaseClient";
 import Navbar from "../components/Navbar";
-import { useNavigate, useParams } from "react-router-dom";
 
 const JobDetails = () => {
-  // Sample array of jobs (same as in EmployeeDashboard)
-  const [accpeted, setAccepted] = useState("Accept");
-  const navigtate = useNavigate();
-  const jobs = [
-    {
-      id: 1,
-      name: "Software Engineer",
-      description: "Develop and maintain software applications.",
-      schedule: "Mon-Fri, 9:00 AM - 5:00 PM",
-      location: "Remote",
-      salary: "$90,000 per year",
-      requirements:
-        "3+ years of experience in software development, React, Node.js.",
-      benefits:
-        "Health insurance, 401(k), flexible working hours, remote work option.",
-    },
-    {
-      id: 2,
-      name: "Data Scientist",
-      description: "Analyze and interpret complex data to provide insights.",
-      schedule: "Mon-Fri, 9:00 AM - 5:00 PM",
-      location: "On-site",
-      salary: "$100,000 per year",
-      requirements:
-        "Proficiency in Python, R, SQL, and data visualization tools.",
-      benefits: "Health insurance, paid time off, flexible work hours.",
-    },
-    {
-      id: 3,
-      name: "Product Manager",
-      description:
-        "Manage product lifecycle and ensure successful product launches.",
-      schedule: "Mon-Fri, 9:00 AM - 6:00 PM",
-      location: "Hybrid",
-      salary: "$110,000 per year",
-      requirements:
-        "Experience in product management, Agile methodology, leadership skills.",
-      benefits: "Health insurance, performance bonuses, 401(k).",
-    },
-  ];
+  const { id } = useParams();
+  const [contract, setContract] = useState(null);
+  const [loading, setLoading] = useState(true); 
 
-  // Get the job ID from the URL
-  const { jobId } = useParams();
+  useEffect(() => {
+    const fetchContract = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("contracts")
+        .select("*")
+        .eq("id", id)
+        .single();
 
-  // Find the job by its ID
-  const job = jobs.find((job) => job.id === parseInt(jobId));
+      if (error) {
+        console.error("Error fetching contract:", error);
+      } else {
+        setContract(data);
+      }
+      setLoading(false); 
+    };
 
-  if (!job) {
-    return <div>Job not found!</div>;
+    fetchContract();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6] flex justify-center items-center">
+        <h2 className="text-2xl text-orange-600">Loading...</h2> {/* Show a loading message */}
+      </div>
+    );
   }
 
-  const handleAccept = () => {
-    setAccepted("Accepted");
-    setTimeout(() => {
-      navigtate("/my-jobs");
-    }, 1000);
-  };
+  if (!contract) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6] flex justify-center items-center">
+        <h2 className="text-2xl text-orange-600">Contract not found</h2> {/* Handle case when contract is not found */}
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen  bg-[#FFFFFF]">
+    <div className="min-h-screen bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6] pb-20">
       <Navbar />
-      <div className="w-1/2 mx-auto pt-20">
-        <h2 className="text-4xl font-extrabold text-[#0D3B66] mb-6">
-          {job.name} - Detailed Information
-        </h2>
-
-        <p className="text-lg text-[#0D3B66] mb-3">
-          <strong>Description:</strong> {job.description}
-        </p>
-        <p className="text-lg text-[#0D3B66] mb-3">
-          <strong>Schedule:</strong> {job.schedule}
-        </p>
-        <p className="text-lg text-[#0D3B66] mb-3">
-          <strong>Location:</strong> {job.location}
-        </p>
-        <p className="text-lg text-[#0D3B66] mb-3">
-          <strong>Salary:</strong> {job.salary}
-        </p>
-        <p className="text-lg text-[#0D3B66] mb-3">
-          <strong>Requirements:</strong> {job.requirements}
-        </p>
-        <p className="text-lg text-[#0D3B66] mb-3">
-          <strong>Benefits:</strong> {job.benefits}
-        </p>
-        <div
-          className="bg-[#EE964B] cursor-pointer text-white px-6 py-2 rounded-lg transition-all shadow-md text-lg text-center mt-6 w-1/3"
-          onClick={handleAccept}>
-          {accpeted}
-        </div>
+      <div className="text-4xl text-orange-600 font-bold text-center p-12">{contract.contracttitle} Details</div>
+      <div className="w-2/3 mx-auto p-10">
+        <p className="text-2xl"><strong>Description:</strong></p>
+        <p className="text-2xl"><strong>Payment Rate :</strong> {contract.paymentrate}</p>
+        <p className="text-2xl"><strong>Payment Frequency :</strong> {contract.paymentfrequency}</p>
+        <p className="text-2xl"><strong>Location :</strong> {contract.location}</p>
+        <p className="text-2xl pb-10"><strong>Applicants :</strong> {Array.isArray(contract.signers) ? contract.signers.length : 0}</p>
+          <button 
+            onClick={() => console.log('Clicked')} 
+            className='bg-orange-500 text-white px-20 py-2 cursor-pointer rounded-lg hover:bg-orange-600 transition-all shadow-md text-2xl'
+          >
+            Sign the Contract
+          </button>
       </div>
+      
     </div>
   );
-};
+}
 
 export default JobDetails;
