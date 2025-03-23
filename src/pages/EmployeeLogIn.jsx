@@ -102,6 +102,7 @@ const EmployeeLogIn = () => {
                 className="absolute top-5 right-5 text-[#EDAA76] text-xl">
                 {showPassword ? <FaEye /> : <FaEyeSlash />}
               </button>
+
             </div>
 
             {/* Log In Button */}

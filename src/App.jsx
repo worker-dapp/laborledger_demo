@@ -34,12 +34,12 @@ const App = () => {
         <Route path="/employerDashboard" element={<EmployerDashboard />} />
         <Route path="/employeeDashboard" element={<EmployeeDashboard />} />
         {/* <Route path='/view-employees' element={<ViewEmployees />} /> */}
-        <Route path="/dispute" element={<Dispute />} />
-        <Route path="/payments" element={<Payments />} />
-        <Route path="/new-job" element={<NewJob />} />
-        <Route path="/job-details/:jobId" element={<JobDetails />} />
-        <Route path="/my-jobs" element={<MyJobs />} />
-        <Route path="/my-jobs/:jobId" element={<MyJobDetails />} />
+        <Route path='/dispute' element={<Dispute />} />
+        <Route path='/payments' element={<Payments />} />
+        <Route path='/new-job' element={<NewJob />} />
+        <Route path='/job-details/:id' element={<JobDetails />} />
+        <Route path='/my-jobs' element={<MyJobs />} />
+        <Route path="/my-jobs/:id" element={<MyJobDetails />} />
         <Route path="/employer-profile" element={<EmployerProfile />} />
         <Route path="/employee-profile" element={<EmployeeProfile />} />
         <Route path="/view-employees" element={<EmployerJobPortal />} />
