@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { NavLink, Link } from "react-router-dom";
+import logo from "../assets/logo.svg";
 
 const Navbar = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -21,13 +22,19 @@ const Navbar = () => {
 
   return (
     <div className="w-full bg-[#0D3B66] shadow-md">
-      <div className="flex items-center justify-between px-20 py-5">
+      <div className="flex items-center justify-between px-20 py-3">
         {/* Enhanced Brand Name */}
-        <Link to="/" className="text-4xl font-extrabold tracking-wide">
+        <Link
+          to="/"
+          className="flex items-center gap-3 text-3xl font-extrabold tracking-wide">
+          <img
+            src={logo}
+            alt="LucidLedger Logo"
+            className="w-20 h-16 object-contain"
+          />
           <span className="text-[#F4D35E] hover:[#EE964B] transition-all">
-            Lucid
+            LucidLedger
           </span>
-          <span className="text-[#F4D35E]">Ledger</span>
         </Link>
 
         {/* Navigation */}
@@ -35,18 +42,18 @@ const Navbar = () => {
           <NavLink
             to="/"
             className={({ isActive }) =>
-              `hover:text-orange-600 transition-all ${
-                isActive ? "text-orange-600 font-semibold" : "text-white"
-              }`
+              `transition-all font-medium ${
+                isActive ? "text-[#EE964B] font-semibold" : "text-white"
+              } hover:text-[#F4D35E]`
             }>
             Home
           </NavLink>
           <NavLink
             to="/about-us"
             className={({ isActive }) =>
-              `hover:text-orange-600 transition-all ${
-                isActive ? "text-orange-600 font-semibold" : "text-white"
-              }`
+              `transition-all font-medium ${
+                isActive ? "text-[#EE964B] font-semibold" : "text-white"
+              } hover:text-[#F4D35E]`
             }>
             About Us
           </NavLink>

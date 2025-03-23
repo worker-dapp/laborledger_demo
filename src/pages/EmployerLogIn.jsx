@@ -69,7 +69,7 @@ const EmployerLogIn = () => {
       <div className="flex justify-center items-center p-6 flex-grow">
         <div className="w-full max-w-lg p-10">
           {/* Centered Heading */}
-          <h2 className="text-5xl font-semibold text-center text-[#0D3B66]git  mb-8">
+          <h2 className="text-5xl font-semibold text-center text-[#0D3B66]  mb-8">
             Employer Log In
           </h2>
 
