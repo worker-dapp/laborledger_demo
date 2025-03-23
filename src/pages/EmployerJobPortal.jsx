@@ -318,7 +318,6 @@ const EmployerJobPortal = () => {
         </div>
       )}
     </div>
-    </div>
   );
 };
 

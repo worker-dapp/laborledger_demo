@@ -405,7 +405,6 @@ const WorkerOnboardingForm = () => {
         )}
       </div>
     </div>
-    </div>
   );
 };
 
