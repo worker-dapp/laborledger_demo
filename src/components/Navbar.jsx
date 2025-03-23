@@ -4,19 +4,19 @@ import logo from "../assets/Android.png";
 
 const Navbar = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const [user, setUser] = useState(localStorage.getItem('userRole'));
+  const [user, setUser] = useState(localStorage.getItem("userRole"));
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const handleStorageChange = () => {
-      setUser(localStorage.getItem('userRole'));
+      setUser(localStorage.getItem("userRole"));
     };
 
-    window.addEventListener('storage', handleStorageChange);
-    
+    window.addEventListener("storage", handleStorageChange);
+
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
 
@@ -34,13 +34,13 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = () => {
-    navigate('/');
-    localStorage.removeItem('userRole');
+    navigate("/");
+    localStorage.removeItem("userRole");
     setUser(null);
   };
 
   return (
-    <div className="w-full bg-[#0D3B66] shadow-md">
+    <div className=" w-full z-50 bg-[#0D3B66] shadow-md">
       <div className="max-w-7xl w-full mx-auto flex flex-wrap items-center justify-between px-4 sm:px-8 py-3 gap-y-3">
         {/* Enhanced Brand Name */}
         <Link

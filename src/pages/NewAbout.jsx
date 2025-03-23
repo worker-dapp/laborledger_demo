@@ -75,19 +75,19 @@ const AboutPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#FFFFFF] text-[#0D3B66]">
+    <div className="min-h-screen flex flex-col bg-[#FFFFFF] text-[#0D3B66] ">
       <Navbar />
       {/* Hero Section with Parallax */}
       <div
         ref={heroRef}
-        className="relative h-screen flex items-center justify-center overflow-hidden">
+        className="relative h-screen flex items-center justify-center overflow-hidden text-[#0D3B66]">
         <div
           className="absolute inset-0 z-0"
           style={{
             transform: `translateY(${scrollY * 0.5}px)`,
             opacity: 1 - scrollY / 700,
           }}>
-          <div className="absolute inset-0 bg-gradient-to-b from-[#FAF0CA] to-white"></div>
+          <div className="absolute inset-0 "></div>
           <div className="h-full w-full bg-[url('https://images.unsplash.com/photo-1601071761197-9c1f3625e61d')] bg-cover bg-center"></div>
         </div>
 
@@ -103,12 +103,12 @@ const AboutPage = () => {
       </div>
 
       {/* About Section */}
-      <div className="container mx-auto px-4 py-20 ">
+      <div className="container mx-auto px-4  ">
         <AnimatedSection className="mb-32">
           <h2 className="text-4xl font-bold mb-8 text-center">Our Vision</h2>
           <div className="max-w-3xl mx-auto text-lg text-[#0D3B66] space-y-6">
             <p>
-              Labor Ledger offers a revolutionary approach to addressing labor
+              Lucid Ledger offers a revolutionary approach to addressing labor
               exploitation through blockchain technology. Our decentralized
               application creates a transparent ecosystem where workers,
               employers, and other stakeholders can engage in fair, verifiable,
@@ -127,56 +127,6 @@ const AboutPage = () => {
         {/* Core Components Section */}
         <AnimatedSection className="mb-32">
           <div className="flex flex-col md:flex-row items-center justify-between gap-16 px-20">
-            {/* <div className="flex-1">
-              <h2 className="text-3xl font-bold mb-6 text-blue-400">
-                Core Components
-              </h2>
-              <ul className="space-y-4 text-gray-300">
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center mr-3 mt-1">
-                    <span className="text-sm font-bold">1</span>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-xl text-white">
-                      Work Contracts
-                    </h3>
-                    <p>
-                      Smart contracts that manage relationships between workers
-                      and employers, handling payments, verification,
-                      grievances, and more.
-                    </p>
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center mr-3 mt-1">
-                    <span className="text-sm font-bold">2</span>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-xl text-white">
-                      Contract Factory
-                    </h3>
-                    <p>
-                      The main entry point for contract creation, providing
-                      templates, configuration options, and stakeholder
-                      validation.
-                    </p>
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center mr-3 mt-1">
-                    <span className="text-sm font-bold">3</span>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-xl text-white">DAOs</h3>
-                    <p>
-                      Decentralized Autonomous Organizations for workers and
-                      employers to govern the system and ensure fair
-                      representation.
-                    </p>
-                  </div>
-                </li>
-              </ul>
-            </div> */}
             <div className="flex-1 ">
               <h2 className="text-3xl font-bold mb-6 text-[#EE964B]">
                 Core Components
@@ -271,68 +221,8 @@ contract WorkContract {
 
         {/* Flow Diagram */}
         <AnimatedSection className="mb-32">
-          {/* <h2 className="text-3xl font-bold mb-8 text-center">
-            Labor Ledger System Flow
-          </h2>
-          <div className="max-w-4xl mx-auto bg-gray-800/50 p-6 rounded-lg">
-            <div className="flex flex-col items-center justify-center text-center">
-              <div className="mb-6 p-4 bg-blue-900/50 rounded-lg w-full md:w-2/3">
-                <h3 className="font-bold text-xl">Entry Points</h3>
-                <div className="grid grid-cols-2 gap-4 mt-3">
-                  <div className="bg-blue-800/40 p-3 rounded">Employer</div>
-                  <div className="bg-blue-800/40 p-3 rounded">Worker</div>
-                </div>
-              </div>
-
-              <div className="w-px h-12 bg-blue-500"></div>
-
-              <div className="mb-6 p-4 bg-blue-900/50 rounded-lg w-full md:w-2/3">
-                <h3 className="font-bold text-xl">Contract Creation</h3>
-                <div className="mt-3 space-y-3">
-                  <div className="bg-blue-800/40 p-3 rounded">
-                    Contract Factory
-                  </div>
-                  <div className="bg-blue-800/40 p-3 rounded">
-                    Requirements & Configuration
-                  </div>
-                  <div className="bg-blue-800/40 p-3 rounded">Job Posting</div>
-                </div>
-              </div>
-
-              <div className="w-px h-12 bg-blue-500"></div>
-
-              <div className="mb-6 p-4 bg-blue-900/50 rounded-lg w-full md:w-2/3">
-                <h3 className="font-bold text-xl">Work Period</h3>
-                <div className="mt-3 space-y-3">
-                  <div className="bg-blue-800/40 p-3 rounded">
-                    Escrow System
-                  </div>
-                  <div className="bg-blue-800/40 p-3 rounded">
-                    Oracle Verification
-                  </div>
-                  <div className="bg-blue-800/40 p-3 rounded">
-                    Compliance Monitoring
-                  </div>
-                </div>
-              </div>
-
-              <div className="w-px h-12 bg-blue-500"></div>
-
-              <div className="p-4 bg-blue-900/50 rounded-lg w-full md:w-2/3">
-                <h3 className="font-bold text-xl">Resolution</h3>
-                <div className="grid grid-cols-2 gap-4 mt-3">
-                  <div className="bg-blue-800/40 p-3 rounded">
-                    Dispute Resolution
-                  </div>
-                  <div className="bg-blue-800/40 p-3 rounded">
-                    Payment Release
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div> */}
           <h2 className="text-3xl font-bold mb-8 text-center">
-            Labor Ledger System Flow
+            Lucid Ledger System Flow
           </h2>
           <div className="max-w-4xl mx-auto bg-[#FAF0CA] p-6 rounded-lg space-y-6 text-center">
             {flowSteps.map((step, i) => (
@@ -369,7 +259,7 @@ contract WorkContract {
           </h2>
           <div className="max-w-3xl mx-auto text-lg text-[#0D3B66] space-y-6">
             <p>
-              Labor Ledger incorporates a comprehensive set of layered
+              Lucid Ledger incorporates a comprehensive set of layered
               security...
             </p>
             <p>
@@ -390,7 +280,7 @@ contract WorkContract {
 
         {/* Join Us Section */}
         <AnimatedSection>
-          <div className="bg-gradient-to-r from-[#F4D35E] to-[#EE964B] rounded-xl p-8 md:p-12 max-w-4xl mx-auto text-[#0D3B66]">
+          <div className="bg-gradient-to-r from-[#F4D35E] to-[#EE964B] rounded-xl p-8 md:p-12 max-w-4xl mx-auto text-[#0D3B66] my-10">
             <h2 className="text-3xl font-bold mb-6 text-center">
               Join Our Mission
             </h2>
