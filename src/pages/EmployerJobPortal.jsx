@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import supabase from "../supabaseClient";
-import Navbar from "../components/Navbar";
 
 const EmployerJobPortal = () => {
   // --------------------------------------------------------------------------
@@ -149,7 +148,6 @@ const EmployerJobPortal = () => {
   // --------------------------------------------------------------------------
   return (
     <div className="relative min-h-screen p-6 bg-[#FFFFFF]">
-      <Navbar />
       {/* TOP BAR */}
       <div className="max-w-5xl mx-auto flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-[#0D3B66]">View Contracts</h1>
