@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import supabase from "../supabaseClient";
+import Navbar from "../components/Navbar";
 
 const EmployerJobPortal = () => {
   // --------------------------------------------------------------------------
@@ -142,7 +143,9 @@ const EmployerJobPortal = () => {
   // RENDER
   // --------------------------------------------------------------------------
   return (
-    <div className="relative min-h-screen p-6 bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6]">
+    <div className="min-h-screen bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6]">
+      <Navbar />
+    <div className="relative py-10">
       {/* TOP BAR */}
       <div className="max-w-5xl mx-auto flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-orange-600">View Contracts</h1>
@@ -157,35 +160,35 @@ const EmployerJobPortal = () => {
       </div>
 
       {/* CONTRACT LISTINGS (FILTERED) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 max-w-5xl mx-auto">
         {filteredContracts.map((contract) => (
           <div
             key={contract.id}
-            className="bg-white p-4 rounded-lg shadow-md border-l-4 border-orange-500"
+            className="bg-white p-8 rounded-lg shadow-md border-l-4 border-orange-500"
           >
-            <h2 className="text-lg font-bold text-orange-600 mb-2">
+            <h2 className="text-2xl font-bold text-orange-600 mb-2">
               {contract.contracttitle}
             </h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-lg text-gray-600">
               <strong>Payment Rate:</strong> {contract.paymentrate}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-lg text-gray-600">
               <strong>Payment Frequency:</strong> {contract.paymentfrequency}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-lg text-gray-600">
               <strong>Location:</strong> {contract.location}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-lg text-gray-600">
               <strong>Status:</strong> {contract.status}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-lg text-gray-600">
               <strong>Applicants:</strong>{" "}
               {Array.isArray(contract.signers) ? contract.signers.length : 0}
             </p>
 
             {/* Button to see signers */}
             <button
-              className="mt-4 w-full bg-orange-500 text-white px-4 py-2 rounded-full shadow-md hover:bg-orange-600"
+              className="mt-4 text-lg w-full bg-orange-500 text-white px-4 py-2 rounded-full shadow-md hover:bg-orange-600"
               onClick={() => handleViewSigners(contract)}
             >
               View Applicants
@@ -311,6 +314,7 @@ const EmployerJobPortal = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

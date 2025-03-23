@@ -1,76 +1,64 @@
-import React, { useState } from 'react'
-import Navbar from '../components/Navbar'
-import { useNavigate, useParams } from 'react-router-dom'
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import supabase from "../supabaseClient";
+import Navbar from "../components/Navbar";
 
 const JobDetails = () => {
-  // Sample array of jobs (same as in EmployeeDashboard)
-  const [accpeted, setAccepted] = useState("Accept")
-  const navigtate = useNavigate()
-  const jobs = [
-    {
-      id: 1,
-      name: 'Software Engineer',
-      description: 'Develop and maintain software applications.',
-      schedule: 'Mon-Fri, 9:00 AM - 5:00 PM',
-      location: 'Remote',
-      salary: '$90,000 per year',
-      requirements: '3+ years of experience in software development, React, Node.js.',
-      benefits: 'Health insurance, 401(k), flexible working hours, remote work option.'
-    },
-    {
-      id: 2,
-      name: 'Data Scientist',
-      description: 'Analyze and interpret complex data to provide insights.',
-      schedule: 'Mon-Fri, 9:00 AM - 5:00 PM',
-      location: 'On-site',
-      salary: '$100,000 per year',
-      requirements: 'Proficiency in Python, R, SQL, and data visualization tools.',
-      benefits: 'Health insurance, paid time off, flexible work hours.'
-    },
-    {
-      id: 3,
-      name: 'Product Manager',
-      description: 'Manage product lifecycle and ensure successful product launches.',
-      schedule: 'Mon-Fri, 9:00 AM - 6:00 PM',
-      location: 'Hybrid',
-      salary: '$110,000 per year',
-      requirements: 'Experience in product management, Agile methodology, leadership skills.',
-      benefits: 'Health insurance, performance bonuses, 401(k).'
-    }
-  ];
+  const { id } = useParams();
+  const [contract, setContract] = useState(null);
 
-  // Get the job ID from the URL
-  const { jobId } = useParams();
+  useEffect(() => {
+    const fetchContract = async () => {
+      const { data, error } = await supabase
+        .from("contracts")
+        .select("*")
+        .eq("id", id)
+        .single();
 
-  // Find the job by its ID
-  const job = jobs.find(job => job.id === parseInt(jobId));
+      if (error) {
+        console.error("Error fetching contract:", error);
+      } else {
+        setContract(data);
+      }
+    };
 
-  if (!job) {
-    return <div>Job not found!</div>
-  }
+    fetchContract();
+  }, [id]);
 
-  const handleAccept = () => {
-    setAccepted("Accepted")
-    setTimeout(() => {
-      navigtate('/my-jobs')
-    }, 1000)
+  if (!contract) {
+    return <p className="text-center text-lg">Loading...</p>;
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6]">
       <Navbar />
-      <div className="w-1/2 mx-auto pt-20">
-        <h2 className="text-3xl font-bold mb-4">{job.name} - Detailed Information</h2>
-        
-        <p className="text-lg mb-2"><strong>Description:</strong> {job.description}</p>
-        <p className="text-lg mb-2"><strong>Schedule:</strong> {job.schedule}</p>
-        <p className="text-lg mb-2"><strong>Location:</strong> {job.location}</p>
-        <p className="text-lg mb-2"><strong>Salary:</strong> {job.salary}</p>
-        <p className="text-lg mb-2"><strong>Requirements:</strong> {job.requirements}</p>
-        <p className="text-lg mb-2"><strong>Benefits:</strong> {job.benefits}</p>
-        <div className='bg-orange-500 cursor-pointer text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-all shadow-md text-lg text-center mt-6 w-1/3'
-            onClick={handleAccept}>
-          {accpeted}
+      <div className="flex flex-col items-center justify-center pt-20">
+        <div className="max-w-3xl w-full">
+          <h1 className="text-5xl font-bold text-orange-600 mb-4">{contract.contracttitle}</h1>
+          <p className="text-2xl text-gray-600">
+            <strong>Payment Rate :</strong> {contract.paymentrate}
+          </p>
+          <p className="text-2xl text-gray-600">
+            <strong>Payment Frequency :</strong> {contract.paymentfrequency}
+          </p>
+          <p className="text-2xl text-gray-600">
+            <strong>Location :</strong> {contract.location}
+          </p>
+          <p className="text-2xl text-gray-600">
+            <strong>Status :</strong> {contract.status}
+          </p>
+          <p className="text-2xl text-gray-600">
+            <strong>Description :</strong> {contract.description}
+          </p>
+          <p className="text-2xl text-gray-600 pb-10">
+            <strong>Applicants :</strong> {Array.isArray(contract.signers) ? contract.signers.length : 0}
+          </p>
+          <button 
+            onClick={() => console.log('Clicked')} 
+            className='bg-orange-500 text-white px-20 py-2 cursor-pointer rounded-lg hover:bg-orange-600 transition-all shadow-md text-2xl'
+          >
+            Sign the Contract
+          </button>
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import supabase from "../supabaseClient";
+import Navbar from "../components/Navbar";
 
 const WorkerOnboardingForm = () => {
   // --------------------------------------------------------------------------
@@ -154,7 +155,9 @@ const WorkerOnboardingForm = () => {
   // Render
   // --------------------------------------------------------------------------
   return (
-    <div className="bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6] p-10 flex justify-center items-center min-h-screen relative">
+    <div className="bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6]">
+    <Navbar />
+    <div className="p-10 flex justify-center items-center min-h-screen relative">
       {/* LOADER OVERLAY */}
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50">
@@ -408,6 +411,7 @@ const WorkerOnboardingForm = () => {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 };
