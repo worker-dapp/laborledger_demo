@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { NavLink, Link } from "react-router-dom";
-import logo from "../assets/logo.svg";
+import logo from "../assets/Android.png";
 
 const Navbar = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -26,14 +26,14 @@ const Navbar = () => {
         {/* Enhanced Brand Name */}
         <Link
           to="/"
-          className="flex items-center gap-3 text-3xl font-extrabold tracking-wide">
+          className="flex items-center gap-1 text-3xl font-bold tracking-wide">
           <img
             src={logo}
             alt="LucidLedger Logo"
-            className="w-20 h-16 object-contain"
+            className="w-16 h-16 object-contain"
           />
-          <span className="text-[#F4D35E] hover:[#EE964B] transition-all">
-            LucidLedger
+          <span className="text-[#FFFFFF] hover:[#EE964B] transition-all">
+            LUCID LEDGER
           </span>
         </Link>
 

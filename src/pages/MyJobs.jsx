@@ -17,7 +17,7 @@ const jobs = [
 
 const MyJobs = () => {
   return (
-    <div className="min-h-screen bg-[#FFF9E5] pb-20">
+    <div className="min-h-screen bg-[#FFFFFF] pb-20">
       <Navbar />
       <div className="text-3xl font-bold text-[#0D3B66] text-center p-12">
         Current Jobs
@@ -29,7 +29,7 @@ const MyJobs = () => {
           <Link
             to={`/my-jobs/${job.id}`}
             key={job.id}
-            className="bg-white border border-[#F4D35E] p-8 rounded-2xl shadow-md hover:shadow-xl transition-all">
+            className="bg-gradient-to-b from-[#FAF0CA] to-white border border-[#F4D35E] p-8 rounded-2xl shadow-md hover:shadow-xl transition-all">
             <h3 className="text-xl font-semibold mb-2">{job.name}</h3>
             <p className="text-lg mb-2">
               <strong>Description:</strong> {job.description}

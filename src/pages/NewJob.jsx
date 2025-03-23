@@ -154,7 +154,7 @@ const WorkerOnboardingForm = () => {
   // Render
   // --------------------------------------------------------------------------
   return (
-    <div className="bg-[#FFF9E5] p-10 flex justify-center items-center min-h-screen relative">
+    <div className="bg-[#FFFFFF] p-10 flex justify-center items-center min-h-screen relative">
       {/* LOADER OVERLAY */}
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50">

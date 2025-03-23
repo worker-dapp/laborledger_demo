@@ -63,7 +63,7 @@ const MyJobDetails = () => {
   }, [location, punchInDetails]);
 
   return (
-    <div className="min-h-screen bg-[#FFF9E5] pb-20">
+    <div className="min-h-screen bg-[#FFFFFF] pb-20">
       <Navbar />
       <div className="text-3xl text-[#0D3B66] text-center p-12">
         {job?.name} Details

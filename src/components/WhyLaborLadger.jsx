@@ -17,10 +17,10 @@ const defaultOptions = (animationData) => ({
 
 const WhyLaborLedger = () => {
   return (
-    <div className="py-20   bg-[#FFF9E5] ">
+    <div className="py-20   bg-[#FFFFFF] ">
       {/* Section Title */}
       <h1 className="text-5xl text-center font-extrabold text-[#0D3B66] mb-16">
-        Why <span className="text-[#EE964B]">LucidLedger?</span>
+        Why <span className="text-[#EE964B]">LUCID LEDGER?</span>
       </h1>
 
       {/* Easy Payments Section */}

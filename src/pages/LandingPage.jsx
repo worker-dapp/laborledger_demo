@@ -9,13 +9,13 @@ import employeeImg from "../assets/jobs.jpg";
 
 const LandingPage = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-[#FFF9E5]">
+    <div className="min-h-screen flex flex-col bg-[#FFFFFF]">
       <Navbar />
 
       {/* Main Content */}
       <div className="flex flex-col items-center text-center px-6 py-20">
         <h1 className="text-5xl md:text-6xl font-extrabold text-[#0D3B66]">
-          Welcome to <span className="text-[#EE964B]">LucidLedger</span>
+          Welcome to <span className="text-[#EE964B]">LUCID LEDGER</span>
         </h1>
         <h3 className="text-lg text-[#6B7280] mt-3">
           Choose your role and create an account or sign in.
@@ -24,7 +24,9 @@ const LandingPage = () => {
         {/* Cards Section */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl">
           {/* Employer Card */}
-          <div className="p-10 rounded-3xl shadow-2xl border border-gray-100 bg-white transition-all hover:shadow-2xl hover:scale-[1.03] flex flex-col items-center text-center">
+          <div
+            className="p-10 rounded-3xl shadow-2xl border border-gray-100   bg-gradient-to-b from-[#FAF0CA] via-white to-white 
+  bg-[length:100%_20%] bg-no-repeat  transition-all hover:shadow-2xl hover:scale-[1.03] flex flex-col items-center text-center">
             <img
               src={employerImg}
               alt="Employer"
@@ -46,7 +48,9 @@ const LandingPage = () => {
           </div>
 
           {/* Employee Card */}
-          <div className="p-10 rounded-3xl shadow-2xl border border-gray-100 bg-white transition-all hover:shadow-2xl hover:scale-[1.03] flex flex-col items-center text-center">
+          <div
+            className="p-10 rounded-3xl shadow-2xl border border-gray-100   bg-gradient-to-b from-[#FAF0CA] via-white to-white 
+  bg-[length:100%_20%] bg-no-repeat  transition-all hover:shadow-2xl hover:scale-[1.03] flex flex-col items-center text-center">
             <img
               src={employeeImg}
               alt="Employee"

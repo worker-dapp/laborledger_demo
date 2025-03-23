@@ -7,7 +7,7 @@ import img4 from "../assets/feature4.png";
 
 const Banner = () => {
   return (
-    <div className="bg-[#FFF9E5] py-10 ">
+    <div className="bg-[#FFFFFF] py-10 ">
       <div className="w-full flex items-center justify-between bg-[##FFF9E5] px-16">
         <div className="text-3xl md:text-4xl font-semibold text-center md:text-left text-[#0D3B66] space-y-2">
           <p>Transparent.</p>
@@ -44,9 +44,9 @@ const Banner = () => {
         </div>
       </div> */}
 
-      <div className="w-full bg-[#FFF9E5] py-16 px-6 md:px-20">
+      <div className="w-full bg-[#FFFFFF] py-16 px-6 md:px-20">
         <h2 className="text-2xl md:text-3xl font-bold text-[#0D3B66] text-center mb-12">
-          What Makes <span className="text-[#EE964B]">LucidLedger</span>{" "}
+          What Makes <span className="text-[#EE964B]">LUCID LEDGER</span>{" "}
           Different?
         </h2>
 

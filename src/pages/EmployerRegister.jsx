@@ -63,7 +63,7 @@ const EmployerRegister = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFF9E5]  flex flex-col">
+    <div className="min-h-screen bg-[#FFFFFF]  flex flex-col">
       <Navbar />
       <div className="flex justify-center items-center p-6 flex-grow">
         <div className="w-full max-w-lg p-10">

@@ -62,7 +62,7 @@ const JobDetails = () => {
   };
 
   return (
-    <div className="min-h-screen  bg-[#FFF9E5]">
+    <div className="min-h-screen  bg-[#FFFFFF]">
       <Navbar />
       <div className="w-1/2 mx-auto pt-20">
         <h2 className="text-4xl font-extrabold text-[#0D3B66] mb-6">

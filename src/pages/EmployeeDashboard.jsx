@@ -33,7 +33,7 @@ const EmployeeDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FFF9E5] pb-20">
+    <div className="min-h-screen bg-[#FFFFFF] pb-20">
       <Navbar />
       <div>
         <div className="relative ">
@@ -54,7 +54,7 @@ const EmployeeDashboard = () => {
             <Link
               key={job.id}
               to={`/job-details/${job.id}`}
-              className="bg-white p-8 rounded-2xl border border-[#F4D35E] shadow-md hover:shadow-xl transition-shadow duration-300">
+              className="bg-gradient-to-b from-[#FAF0CA] to-white p-8 rounded-2xl border border-[#F4D35E] shadow-md hover:shadow-xl transition-shadow duration-300">
               <h3 className="text-2xl font-bold text-[#0D3B66] mb-2">
                 {job.name}
               </h3>

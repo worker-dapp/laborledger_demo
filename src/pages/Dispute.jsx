@@ -19,7 +19,7 @@ const Dispute = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[#FFF9E5] pb-20">
+    <div className="min-h-screen bg-[#FFFFFF] pb-20">
       <Navbar />
       <div className="w-1/2 mx-auto pt-10">
         <input
