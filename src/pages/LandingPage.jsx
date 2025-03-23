@@ -9,9 +9,7 @@ import employeeImg from "../assets/jobs.jpg";
 
 const LandingPage = () => {
   return (
-    <div
-      // className="min-h-screen flex flex-col bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6]"
-      className="min-h-screen flex flex-col bg-[#FFF9E5]">
+    <div className="min-h-screen flex flex-col bg-[#FFF9E5]">
       <Navbar />
 
       {/* Main Content */}

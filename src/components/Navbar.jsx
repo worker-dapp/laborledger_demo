@@ -59,7 +59,6 @@ const Navbar = () => {
                   ? "/employee-profile"
                   : "/employer-profile"
               }
-              // className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-all shadow-md text-lg"
               className="bg-[#EE964B] text-white px-5 py-2 rounded-lg hover:bg-[#d97b33] transition-all shadow-md">
               Profile
             </Link>
@@ -75,13 +74,11 @@ const Navbar = () => {
                 <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg rounded-lg">
                   <Link
                     to="/employeeDashboard"
-                    // className="block px-4 py-2 text-gray-900 hover:bg-orange-100 transition-all rounded-t-lg"
                     className="block px-4 py-2 text-[#0D3B66] hover:bg-[#FAF0CA] transition-all rounded-t-lg">
                     Employee
                   </Link>
                   <Link
                     to="/employerDashboard"
-                    // className="block px-4 py-2 text-gray-900 hover:bg-orange-100 transition-all rounded-b-lg"
                     className="block px-4 py-2 text-[#0D3B66] hover:bg-[#FAF0CA] transition-all rounded-b-lg">
                     Employer
                   </Link>

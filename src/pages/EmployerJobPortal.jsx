@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import supabase from "../supabaseClient";
 
 const EmployerJobPortal = () => {
@@ -49,14 +49,17 @@ const EmployerJobPortal = () => {
     // 1. Filter by contracttitle
     if (searchTitle.trim() !== "") {
       updated = updated.filter((contract) =>
-        contract.contracttitle?.toLowerCase().includes(searchTitle.toLowerCase())
+        contract.contracttitle
+          ?.toLowerCase()
+          .includes(searchTitle.toLowerCase())
       );
     }
 
     // 2. Filter by status
     if (statusFilter.trim() !== "") {
       updated = updated.filter(
-        (contract) => contract.status?.toLowerCase() === statusFilter.toLowerCase()
+        (contract) =>
+          contract.status?.toLowerCase() === statusFilter.toLowerCase()
       );
     }
 
@@ -99,7 +102,9 @@ const EmployerJobPortal = () => {
     if (!selectedContract) return;
 
     // Optional check: only set status to 'pending' if at least one signer is checked
-    const anyChecked = (selectedContract.signers || []).some((s) => s.isChecked);
+    const anyChecked = (selectedContract.signers || []).some(
+      (s) => s.isChecked
+    );
 
     if (!anyChecked) {
       alert("No signers were selected. Please check at least one signer.");
@@ -142,16 +147,15 @@ const EmployerJobPortal = () => {
   // RENDER
   // --------------------------------------------------------------------------
   return (
-    <div className="relative min-h-screen p-6 bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6]">
+    <div className="relative min-h-screen p-6 bg-[#FFF9E5]">
       {/* TOP BAR */}
       <div className="max-w-5xl mx-auto flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-orange-600">View Contracts</h1>
+        <h1 className="text-3xl font-bold text-[#0D3B66]">View Contracts</h1>
 
         {/* Button or Link to create new contract */}
         <Link
           to="/new-job"
-          className="bg-orange-500 text-white px-6 py-2 rounded-full shadow-md hover:bg-orange-600 inline-block text-center"
-        >
+          className="bg-[#EE964B] text-white px-6 py-2 rounded-full shadow-md hover:bg-[#d97b33] transition">
           Create a new Contract
         </Link>
       </div>
@@ -161,33 +165,31 @@ const EmployerJobPortal = () => {
         {filteredContracts.map((contract) => (
           <div
             key={contract.id}
-            className="bg-white p-4 rounded-lg shadow-md border-l-4 border-orange-500"
-          >
-            <h2 className="text-lg font-bold text-orange-600 mb-2">
+            className="bg-white p-4 rounded-lg shadow-md border-l-4 border-[#F4D35E]">
+            <h2 className="text-lg font-bold text-[#EE964B] mb-2">
               {contract.contracttitle}
             </h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-[#0D3B66]">
               <strong>Payment Rate:</strong> {contract.paymentrate}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-[#0D3B66]">
               <strong>Payment Frequency:</strong> {contract.paymentfrequency}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-[#0D3B66]">
               <strong>Location:</strong> {contract.location}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-[#0D3B66]">
               <strong>Status:</strong> {contract.status}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-[#0D3B66]">
               <strong>Applicants:</strong>{" "}
               {Array.isArray(contract.signers) ? contract.signers.length : 0}
             </p>
 
             {/* Button to see signers */}
             <button
-              className="mt-4 w-full bg-orange-500 text-white px-4 py-2 rounded-full shadow-md hover:bg-orange-600"
-              onClick={() => handleViewSigners(contract)}
-            >
+              className="mt-4 w-full bg-[#EE964B] text-white px-4 py-2 rounded-full shadow-md cursor-pointer"
+              onClick={() => handleViewSigners(contract)}>
               View Applicants
             </button>
           </div>
@@ -198,21 +200,19 @@ const EmployerJobPortal = () => {
       <button
         onClick={() => setShowFilters(!showFilters)}
         className="absolute top-6 left-6 w-12 h-12 rounded-full bg-white shadow-md border 
-                   flex items-center justify-center text-orange-500 hover:bg-orange-50"
-      >
+                   flex items-center justify-center text-[#EE964B] hover:bg-orange-50 cursor-pointer">
         {/* Icon (funnel/hamburger) */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-6 w-6"
           fill="none"
           viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
+          stroke="currentColor">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
             strokeWidth={2}
-            d="M3 4h18M8 12h8m-6 8h4" 
+            d="M3 4h18M8 12h8m-6 8h4"
           />
         </svg>
       </button>
@@ -222,13 +222,14 @@ const EmployerJobPortal = () => {
         <div
           className="absolute top-20 left-6 w-64 bg-white p-4 rounded shadow-md border 
                      transition-all"
-          style={{ zIndex: 9999 }}
-        >
+          style={{ zIndex: 9999 }}>
           <h2 className="text-xl font-bold mb-4">Filters</h2>
 
           {/* Search by Title */}
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-1" htmlFor="searchTitle">
+            <label
+              className="block text-sm font-medium mb-1"
+              htmlFor="searchTitle">
               Search Contract Title
             </label>
             <input
@@ -243,15 +244,16 @@ const EmployerJobPortal = () => {
 
           {/* Status Filter Example */}
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-1" htmlFor="statusFilter">
+            <label
+              className="block text-sm font-medium mb-1"
+              htmlFor="statusFilter">
               Status
             </label>
             <select
               id="statusFilter"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full p-2 border rounded"
-            >
+              className="w-full p-2 border rounded">
               <option value="">-- Any Status --</option>
               <option value="draft">Draft</option>
               <option value="Contract Created">Contract Created</option>
@@ -262,9 +264,8 @@ const EmployerJobPortal = () => {
           </div>
 
           <button
-            className="mt-2 w-full bg-orange-500 text-white py-2 rounded shadow hover:bg-orange-600"
-            onClick={() => setShowFilters(false)}
-          >
+            className="mt-2 w-full bg-[#EE964B] text-white py-2 rounded shadow cursor-pointer"
+            onClick={() => setShowFilters(false)}>
             Close
           </button>
         </div>
@@ -276,7 +277,8 @@ const EmployerJobPortal = () => {
           <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
             <h2 className="text-xl font-bold text-orange-600 mb-4">Signers</h2>
 
-            {Array.isArray(selectedContract.signers) && selectedContract.signers.length > 0 ? (
+            {Array.isArray(selectedContract.signers) &&
+            selectedContract.signers.length > 0 ? (
               <ul className="list-none ml-1">
                 {selectedContract.signers.map((signer, index) => (
                   <li key={index} className="mb-2 flex items-center">
@@ -284,9 +286,13 @@ const EmployerJobPortal = () => {
                       type="checkbox"
                       className="mr-2"
                       checked={signer.isChecked || false}
-                      onChange={(e) => handleSignerCheck(index, e.target.checked)}
+                      onChange={(e) =>
+                        handleSignerCheck(index, e.target.checked)
+                      }
                     />
-                    <span>{signer.name} - {signer.walletAddress}</span>
+                    <span>
+                      {signer.name} - {signer.walletAddress}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -297,14 +303,12 @@ const EmployerJobPortal = () => {
             <div className="flex justify-end gap-4 mt-6">
               <button
                 className="border border-gray-300 px-4 py-2 rounded"
-                onClick={() => setOpenSignersModal(false)}
-              >
+                onClick={() => setOpenSignersModal(false)}>
                 Close
               </button>
               <button
                 className="bg-orange-600 text-white px-4 py-2 rounded"
-                onClick={handleSave}
-              >
+                onClick={handleSave}>
                 Save
               </button>
             </div>
