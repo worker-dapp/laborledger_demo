@@ -45,7 +45,7 @@ const EmployeeProfile = () => {
             </span>
           </p>
           <h2 className="text-2xl font-semibold mb-2">
-            Jobs Posted: <span className="pl-2">2</span>
+            Jobs Completed: <span className="pl-2">2</span>
           </h2>
         </div>
         {error && <p className="text-red-500 font-semibold">Error: {error.message}</p>}

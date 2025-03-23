@@ -70,7 +70,7 @@ const MyJobDetails = () => {
       if (!contract) {
         return (
           <div className="min-h-screen bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6] flex justify-center items-center">
-            <h2 className="text-2xl text-orange-600">Contract not found</h2> {/* Handle case when contract is not found */}
+            <h2 className="text-2xl text-orange-600">Contract not found</h2>
           </div>
         );
       }
@@ -86,13 +86,23 @@ const MyJobDetails = () => {
                 <p className="text-lg"><strong>Payment Rate :</strong> {contract.paymentrate}</p>
                 <p className="text-lg"><strong>Payment Frequency :</strong> {contract.paymentfrequency}</p>
                 <p className="text-lg pb-5"><strong>Location :</strong> {contract.location}</p>
-                <button
-                    onClick={handlePunchIn}
-                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-xl transition"
-                    disabled={loading}
-                >
-                    {loading ? "Fetching..." : "Punch In"}
-                </button>
+                
+                <div className='flex justify-between'>
+                    <button
+                        onClick={handlePunchIn}
+                        className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-8 rounded-xl transition"
+                        disabled={loading}
+                    >
+                        {loading ? "Fetching..." : "Punch In"}
+                    </button>
+                    <button
+                        onClick={handlePunchIn}
+                        className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-8 rounded-xl transition"
+                        disabled={loading}
+                    >
+                        Raise a dispute
+                    </button>
+                </div>
 
                 {error && <p className="text-red-500 mt-2">{error}</p>}
 
