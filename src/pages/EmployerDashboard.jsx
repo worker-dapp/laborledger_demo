@@ -110,7 +110,7 @@ const EmployerDashboard = () => {
             Review Applications
           </Link>
           <Link
-            to="/view-employees"
+            to="/view-open-contracts"
             className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-gradient-to-b from-[#FAF0CA] to-white backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900"
           >
             View Open Contracts

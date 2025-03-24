@@ -19,6 +19,7 @@ import MyJobDetails from "./pages/MyJobDetails";
 import EmployerProfile from "./pages/EmployerProfile";
 import EmployeeProfile from "./pages/EmployeeProfile";
 import EmployerJobPortal from "./pages/EmployerJobPortal";
+import ViewOpenContracts from "./pages/ViewOpenContracts";
 
 const App = () => {
   return (
@@ -43,6 +44,7 @@ const App = () => {
         <Route path="/employer-profile" element={<EmployerProfile />} />
         <Route path="/employee-profile" element={<EmployeeProfile />} />
         <Route path="/view-employees" element={<EmployerJobPortal />} />
+        <Route path="/view-open-contracts" element={<ViewOpenContracts />} />
       </Routes>
     </div>
   );

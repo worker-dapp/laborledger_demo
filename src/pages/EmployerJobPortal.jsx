@@ -24,7 +24,11 @@ const EmployerJobPortal = () => {
   // --------------------------------------------------------------------------
   useEffect(() => {
     const fetchContracts = async () => {
-      const { data, error } = await supabase.from("contracts").select("*");
+      const { data, error } = await supabase
+        .from("contracts")
+        .select("*")
+        .neq("status", "open");
+
       if (error) {
         console.error("Error fetching contracts:", error);
       } else {
