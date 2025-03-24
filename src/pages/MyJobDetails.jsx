@@ -77,7 +77,7 @@ const MyJobDetails = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6] pb-20">
+    <div className="min-h-screen bg-gradient-to-b from-[#FFFFFF] to-[#FFFFFF] pb-20">
       <Navbar />
       <div className="text-4xl text-orange-600 font-bold text-center p-12">
         {contract.contracttitle} Details

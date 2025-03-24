@@ -1,16 +1,34 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import supabase from "../supabaseClient";
-import Navbar from "../components/Navbar";
 
 const JobDetails = () => {
   const { id } = useParams();
-  const [contract, setContract] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  const [workerType, setWorkerType] = useState("Custom Payment");
+  const [paymentFrequency, setPaymentFrequency] = useState("");
+  const [signers, setSigners] = useState([{ name: "", walletAddress: "" }]);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [workerData, setWorkerData] = useState({
+    contractTitle: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    walletAddress: "",
+    location: "",
+    paymentRate: "",
+    milestones: [{ milestone: "", amount: "" }],
+    paymentFrequency: "",
+  });
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     const fetchContract = async () => {
-      setLoading(true);
+      setIsLoading(true);
       const { data, error } = await supabase
         .from("contracts")
         .select("*")
@@ -19,61 +37,190 @@ const JobDetails = () => {
 
       if (error) {
         console.error("Error fetching contract:", error);
+        setErrorMsg("Failed to load contract.");
       } else {
-        setContract(data);
+        setWorkerData({
+          contractTitle: data.contracttitle || "",
+          firstName: data.firstname || "",
+          lastName: data.lastname || "",
+          email: data.email || "",
+          phone: data.phone || "",
+          walletAddress: data.walletaddress || "",
+          location: data.location || "",
+          paymentRate: data.paymentrate || "",
+          milestones: data.milestones?.length ? data.milestones : [{ milestone: "", amount: "" }],
+          paymentFrequency: data.paymentfrequency || "",
+        });
+        setWorkerType(data.contracttype || "Custom Payment");
+        setPaymentFrequency(data.paymentfrequency || "");
+        setSigners(data.signers?.length ? data.signers : [{ name: "", walletAddress: "" }]);
       }
-      setLoading(false);
+      setIsLoading(false);
     };
 
     fetchContract();
   }, [id]);
 
-  if (loading) {
+  const handleSubmit = async () => {
+    if (!acceptedTerms) return;
+
+    const { error } = await supabase
+      .from("contracts")
+      .update({ status: "open" })
+      .eq("id", id);
+
+    if (error) {
+      console.error("Failed to update contract status:", error);
+      setErrorMsg("Failed to sign the contract. Please try again.");
+    } else {
+      navigate("/employeeDashboard");
+    }
+  };
+
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-[#FFFFFF] flex justify-center items-center">
-        <h2 className="text-2xl text-[#EE964B]">Loading...</h2>{" "}
-        {/* Show a loading message */}
+        <h2 className="text-2xl text-[#EE964B]">Loading...</h2>
       </div>
     );
   }
 
-  if (!contract) {
+  if (errorMsg) {
     return (
       <div className="min-h-screen bg-[#FFFFFF] flex justify-center items-center">
-        <h2 className="text-2xl text-[#EE964B]">Contract not found</h2>{" "}
-        {/* Handle case when contract is not found */}
+        <h2 className="text-2xl text-[#EE964B]">{errorMsg}</h2>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FFF8F2] to-[#FFE8D6] pb-20">
-      <Navbar />
-      <div className="text-4xl text-orange-600 font-bold text-center p-12">
-        {contract.contracttitle} Details
-      </div>
-      <div className="w-2/3 mx-auto p-10">
-        <p className="text-2xl">
-          <strong>Description:</strong>
-        </p>
-        <p className="text-2xl">
-          <strong>Payment Rate :</strong> {contract.paymentrate}
-        </p>
-        <p className="text-2xl">
-          <strong>Payment Frequency :</strong> {contract.paymentfrequency}
-        </p>
-        <p className="text-2xl">
-          <strong>Location :</strong> {contract.location}
-        </p>
-        <p className="text-2xl pb-10">
-          <strong>Applicants :</strong>{" "}
-          {Array.isArray(contract.signers) ? contract.signers.length : 0}
-        </p>
-        <button
-          onClick={() => console.log("Clicked")}
-          className="bg-orange-500 text-white px-20 py-2 cursor-pointer rounded-lg hover:bg-orange-600 transition-all shadow-md text-2xl">
-          Sign the Contract
-        </button>
+    <div className="bg-white p-10 flex justify-center items-center min-h-screen">
+      <div className="w-full max-w-2xl">
+        <h2 className="text-3xl font-bold text-center mb-6">Sign Contract</h2>
+
+        <div className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Contract Title</label>
+            <input
+              type="text"
+              name="contractTitle"
+              className="w-full p-3 rounded-xl border bg-gray-100"
+              value={workerData.contractTitle}
+              readOnly
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+            <input
+              type="text"
+              name="firstName"
+              className="w-full p-3 rounded-xl border bg-gray-100"
+              value={workerData.firstName}
+              readOnly
+            />
+          </div>
+
+          <div className="flex gap-4">
+            <div className="w-full">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input
+                type="email"
+                name="email"
+                className="w-full p-3 rounded-xl border bg-gray-100"
+                value={workerData.email}
+                readOnly
+              />
+            </div>
+            <div className="w-full">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+              <input
+                type="tel"
+                name="phone"
+                className="w-full p-3 rounded-xl border bg-gray-100"
+                value={workerData.phone}
+                readOnly
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+            <input
+              type="text"
+              name="location"
+              className="w-full p-3 rounded-xl border bg-gray-100"
+              value={workerData.location}
+              readOnly
+            />
+          </div>
+
+          <h3 className="text-lg font-bold">Payment Details</h3>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Payment Frequency</label>
+            <input
+              type="text"
+              name="paymentFrequency"
+              className="w-full p-3 rounded-xl border bg-gray-100"
+              value={workerData.paymentFrequency}
+              readOnly
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Payment Rate</label>
+            <input
+              type="text"
+              name="paymentRate"
+              className="w-full p-3 rounded-xl border bg-gray-100"
+              value={workerData.paymentRate}
+              readOnly
+            />
+          </div>
+
+          <h3 className="text-lg font-bold">Signers</h3>
+          {signers.map((signer, index) => (
+            <div key={index} className="flex gap-4">
+              <div className="w-full">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <input
+                  type="text"
+                  value={signer.name}
+                  className="w-full p-3 rounded-xl border bg-gray-100"
+                  readOnly
+                />
+              </div>
+              <div className="w-full">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Wallet Address</label>
+                <input
+                  type="text"
+                  value={signer.walletAddress}
+                  className="w-full p-3 rounded-xl border bg-gray-100"
+                  readOnly
+                />
+              </div>
+            </div>
+          ))}
+
+          <label className="flex items-center mt-4 space-x-2 text-sm text-gray-800">
+            <input
+              type="checkbox"
+              className="form-checkbox h-4 w-4 text-orange-500"
+              checked={acceptedTerms}
+              onChange={(e) => setAcceptedTerms(e.target.checked)}
+            />
+            <span>I agree to terms and conditions</span>
+          </label>
+
+          <button
+            onClick={handleSubmit}
+            disabled={!acceptedTerms}
+            className="w-full mt-6 py-3 bg-gradient-to-r from-[#FFB07F] via-[#FFA062] to-[#EE964B] text-white font-medium rounded-lg shadow hover:brightness-105 transition-all"
+          >
+            Sign the Contract
+          </button>
+        </div>
       </div>
     </div>
   );
