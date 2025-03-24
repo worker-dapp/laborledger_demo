@@ -78,39 +78,43 @@ const Navbar = () => {
           </NavLink>
 
           {user ? (
-            <Link
-              to={
-                user.role === "employee"
-                  ? "/employee-profile"
-                  : "/employer-profile"
-              }
-              className="bg-[#EE964B] text-white px-5 py-2 rounded-lg hover:bg-[#d97b33] transition-all shadow-md">
-              Profile
-            </Link>
+            <div className='flex items-center gap-12'>
+              <Link 
+                to={user === 'employee' ? '/employee-profile' : '/employer-profile'} 
+                className='text-gray-900 hover:text-orange-600 transition-all font-semibold text-lg'>
+                Profile
+              </Link>
+              <button 
+                onClick={handleLogout} 
+                className='bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition-all shadow-md text-lg'>
+                  Log Out
+              </button>
+            </div>
           ) : (
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setDropdownOpen(!isDropdownOpen)}
-                className="bg-[#EE964B] hover:bg-[#d97b33] text-white px-4 py-1.5 rounded-lg transition-all shadow-md text-lg">
+            <div className='relative' ref={dropdownRef}>
+              <button 
+                onClick={() => setDropdownOpen(!isDropdownOpen)} 
+                className='bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-all shadow-md text-lg'
+                >
                 Sign In
               </button>
 
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg rounded-lg">
-                  <Link
-                    to="/employeeLogin"
-                    className="block px-4 py-2 text-[#0D3B66] hover:bg-[#FAF0CA] transition-all rounded-t-lg">
+                <div className='absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg rounded-lg'>
+                  <Link 
+                    to='/employeeLogin' 
+                    className='block px-4 py-2 text-gray-900 hover:bg-orange-100 transition-all rounded-t-lg'>
                     Employee
                   </Link>
-                  <Link
-                    to="/employerLogin"
-                    className="block px-4 py-2 text-[#0D3B66] hover:bg-[#FAF0CA] transition-all rounded-b-lg">
+                  <Link 
+                    to='/employerLogin' 
+                    className='block px-4 py-2 text-gray-900 hover:bg-orange-100 transition-all rounded-b-lg'>
                     Employer
                   </Link>
                 </div>
               )}
             </div>
-          )}
+          )}        
         </div>
       </div>
     </div>

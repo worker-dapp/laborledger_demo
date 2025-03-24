@@ -14,6 +14,8 @@ const EmployeeProfile = () => {
         .select('first_name, last_name, email')
         .eq('email', localStorage.getItem('userEmail'));
 
+        console.log(data);
+
       if (error) {
         setError(error);
       } else {
