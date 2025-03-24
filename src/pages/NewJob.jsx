@@ -26,6 +26,7 @@ const WorkerOnboardingForm = () => {
     paymentRate: "",
     milestones: [{ milestone: "", amount: "" }],
     paymentFrequency: "",
+    description: "",
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -93,8 +94,7 @@ const WorkerOnboardingForm = () => {
         status: "Contract Created",
         reviewed: false,
         contracttype: workerType,
-        reviewed: false, // ✅ added reviewed flag
-        contracttype: workerType // for deployment modal check
+        description: workerData.description,
       };
 
       const { data, error } = await supabase
@@ -106,12 +106,6 @@ const WorkerOnboardingForm = () => {
         console.error("Error creating contract:", error);
         setErrorMsg("Failed to create contract. Please try again.");
       } else {
-        if (workerType === "Piece Rate Payment") {
-          alert(
-            "✅ Oracle deployed - 0x5FbDB2315678afecb367f032d93F642f64180aa3" +
-            "✅ Contract deployed - 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-          );
-        }
         if (workerType === "Piece Rate Payment") {
           alert(
             "✅ Oracle deployed - 0x5FbDB2315678afecb367f032d93F642f64180aa3" +
@@ -130,6 +124,7 @@ const WorkerOnboardingForm = () => {
           paymentRate: "",
           milestones: [{ milestone: "", amount: "" }],
           paymentFrequency: "",
+          description: "",
         });
         setPaymentFrequency("");
         setSigners([{ name: "", walletAddress: "" }]);
@@ -225,6 +220,18 @@ const WorkerOnboardingForm = () => {
               Milestone Based
             </button>
           </div>
+
+          <div className="flex gap-4 mb-4">
+            <textarea
+              placeholder="Description"
+              name="description"
+              className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
+              value={workerData.description}
+              onChange={handleChange}
+              rows={4} // optional: controls visible height
+            />
+          </div>
+
 
           {/* Worker Information */}
           <div className="flex gap-4 mb-4">
@@ -356,6 +363,20 @@ const WorkerOnboardingForm = () => {
               value={workerData.paymentRate}
               onChange={handleChange}
             />
+          )}
+
+          {/* Calculate contract payment based on the payment frequency and rate */}
+          {paymentFrequency && workerData.paymentRate && (
+            <p className="text-lg mt-4">
+              Total Payment:{" "}
+              {paymentFrequency === "Hourly"
+                ? `$${parseInt(workerData.paymentRate) * 8}/day`
+                : paymentFrequency === "Daily"
+                ? `$${parseInt(workerData.paymentRate) * 1}/day`
+                : paymentFrequency === "Weekly"
+                ? `$${parseInt(workerData.paymentRate) * 5}/week`
+                : ""}
+            </p>
           )}
 
           {/* Multi-Signature Contract */}

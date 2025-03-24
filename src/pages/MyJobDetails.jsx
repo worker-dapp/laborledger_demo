@@ -91,7 +91,7 @@ const MyJobDetails = () => {
 
       <div className="w-2/3 mx-auto p-10">
         <p className="text-lg">
-          <strong>Description:</strong>
+          <strong>Description:</strong> {contract.description}
         </p>
         <p className="text-lg">
           <strong>Payment Rate :</strong> {contract.paymentrate}
