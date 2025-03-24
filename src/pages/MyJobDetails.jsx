@@ -7,48 +7,54 @@ import supabase from "../supabaseClient";
 const MyJobDetails = () => {
   const { id } = useParams();
   const [contract, setContract] = useState(null);
-
   const { fetchLocation, location, loading, error } = GetLocation();
   const [punchInDetails, setPunchInDetails] = useState([]);
   const [locationFetched, setLocationFetched] = useState(false);
+  const [isPunchedIn, setIsPunchedIn] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [paymentAmount, setPaymentAmount] = useState(null);
 
-  const handlePunchIn = () => {
+  const handlePunch = () => {
     if (!locationFetched && !loading) {
       fetchLocation();
       setLocationFetched(true);
     }
 
     if (location.latitude && location.longitude) {
-      const punchInTime = new Date().toLocaleTimeString();
-      setPunchInDetails((prevState) => [
-        ...prevState,
-        {
-          latitude: location.latitude,
-          longitude: location.longitude,
-          locationName: location.name,
-          time: punchInTime,
-        },
-      ]);
-    }
-  };
+      const currentTime = new Date().toLocaleTimeString();
 
-  useEffect(() => {
-    if (location && location.latitude && location.longitude) {
-      if (punchInDetails.length === 0) {
-        // Ensure we add punch-in only when location is available
-        const punchInTime = new Date().toLocaleTimeString();
-        setPunchInDetails((prevState) => [
-          ...prevState,
+      if (!isPunchedIn) {
+        // Punch in
+        setPunchInDetails((prev) => [
+          ...prev,
           {
             latitude: location.latitude,
             longitude: location.longitude,
             locationName: location.name,
-            time: punchInTime,
+            punchIn: currentTime,
+            punchOut: null,
           },
         ]);
+      } else {
+        // Punch out
+        setPunchInDetails((prev) =>
+          prev.map((entry, idx) =>
+            idx === prev.length - 1 && !entry.punchOut
+              ? { ...entry, punchOut: currentTime }
+              : entry
+          )
+        );
       }
+
+      setIsPunchedIn(!isPunchedIn);
     }
-  }, [location, punchInDetails]);
+  };
+
+  const handleSubmit = () => {
+    setShowModal(true);
+    const randomAmount = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
+    setPaymentAmount(randomAmount);
+  };
 
   useEffect(() => {
     const fetchContract = async () => {
@@ -98,16 +104,28 @@ const MyJobDetails = () => {
         </p>
 
         <div className="flex justify-between">
+        <button
+          onClick={handlePunch}
+          className={`${
+            isPunchedIn
+              ? "bg-red-500 hover:bg-red-600"
+              : "bg-green-500 hover:bg-green-600"
+          } text-white font-bold py-2 px-8 rounded-xl transition`}
+          disabled={loading}
+        >
+          {loading
+            ? "Fetching..."
+            : isPunchedIn
+            ? "Punch Out"
+            : "Punch In"}
+        </button>
+
+
           <button
-            onClick={handlePunchIn}
-            className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-8 rounded-xl transition"
-            disabled={loading}>
-            {loading ? "Fetching..." : "Punch In"}
-          </button>
-          <button
-            onClick={handlePunchIn}
-            className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-8 rounded-xl transition"
-            disabled={loading}>
+            onClick={handlePunch}
+            className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-8 rounded-xl transition"
+            disabled={loading}
+          >
             Raise a dispute
           </button>
         </div>
@@ -123,7 +141,9 @@ const MyJobDetails = () => {
                 <th className="border px-4 py-2">Latitude</th>
                 <th className="border px-4 py-2">Longitude</th>
                 <th className="border px-4 py-2">Location</th>
-                <th className="border px-4 py-2">Time</th>
+                <th className="border px-4 py-2">Punch In</th>
+                <th className="border px-4 py-2">Punch Out</th>
+                <th className="border px-4 py-2">Submit</th>
               </tr>
             </thead>
             <tbody>
@@ -133,12 +153,24 @@ const MyJobDetails = () => {
                     <td className="border px-4 py-2">{detail.latitude}</td>
                     <td className="border px-4 py-2">{detail.longitude}</td>
                     <td className="border px-4 py-2">{detail.locationName}</td>
-                    <td className="border px-4 py-2">{detail.time}</td>
+                    <td className="border px-4 py-2">{detail.punchIn}</td>
+                    <td className="border px-4 py-2">
+                      {detail.punchOut || "-"}
+                    </td>
+                    <td className="border px-4 py-2 text-center">
+                      <button
+                        onClick={handleSubmit}
+                        className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded"
+                        disabled={!detail.punchIn || !detail.punchOut}
+                      >
+                        Submit
+                      </button>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="4" className="border px-4 py-2 text-center">
+                  <td colSpan="6" className="border px-4 py-2 text-center">
                     No Punch-In Data
                   </td>
                 </tr>
@@ -146,6 +178,29 @@ const MyJobDetails = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Modal */}
+        {showModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl shadow-2xl p-10 w-[90%] max-w-md text-center">
+              <h2 className="text-2xl font-bold mb-4">Validating GPS...</h2>
+              <p className="text-lg mb-6">
+                Your punches are validated and you will be paid{" "}
+                <span className="font-semibold text-green-600">
+                  ${paymentAmount}
+                </span>
+                .<br />
+                Check your wallet in about 5–10 mins.
+              </p>
+              <button
+                onClick={() => setShowModal(false)}
+                className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-xl"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
