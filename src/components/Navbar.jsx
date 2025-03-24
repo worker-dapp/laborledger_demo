@@ -81,7 +81,7 @@ const Navbar = () => {
             <div className='flex items-center gap-12'>
               <Link 
                 to={user === 'employee' ? '/employee-profile' : '/employer-profile'} 
-                className='text-gray-900 hover:text-orange-600 transition-all font-semibold text-lg'>
+                className='text-white hover:text-orange-600 transition-all text-lg'>
                 Profile
               </Link>
               <button 

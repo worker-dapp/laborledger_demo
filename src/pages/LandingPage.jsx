@@ -25,7 +25,7 @@ const LandingPage = () => {
         <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl">
           {/* Employer Card */}
           <div
-            className="p-10 rounded-3xl shadow-2xl border border-gray-100   bg-gradient-to-b from-[#FAF0CA] via-white to-white 
+            className="p-10 rounded-3xl shadow-2xl border border-gray-100 border-l-[#0d3b66] border-l-8 via-white to-white 
   bg-[length:100%_20%] bg-no-repeat  transition-all hover:shadow-2xl hover:scale-[1.03] flex flex-col items-center text-center">
             <img
               src={employerImg}
@@ -41,7 +41,7 @@ const LandingPage = () => {
             <Link to="/employerRegister" className="w-full">
               <button
                 //  className="mt-6 bg-gradient-to-r from-[#FFB07F] via-[#FFA062] to-[#E08A44] text-white font-medium px-6 py-3 rounded-lg w-full transition-all hover:shadow-lg hover:brightness-110"
-                className="mt-6 bg-[#EE964B] text-white font-medium px-6 py-3 rounded-lg w-full transition-all hover:bg-[#d97b33] hover:shadow-lg cursor-pointer">
+                className="mt-6 bg-[#0d3b66] text-white font-medium px-6 py-3 rounded-lg w-full transition-all hover:bg-[#1a5a95] hover:shadow-lg cursor-pointer">
                 Create a Contract →
               </button>
             </Link>
@@ -49,7 +49,7 @@ const LandingPage = () => {
 
           {/* Employee Card */}
           <div
-            className="p-10 rounded-3xl shadow-2xl border border-gray-100   bg-gradient-to-b from-[#FAF0CA] via-white to-white 
+            className="p-10 rounded-3xl shadow-2xl border border-gray-100   border-l-[#0d3b66] border-l-8 via-white to-white 
   bg-[length:100%_20%] bg-no-repeat  transition-all hover:shadow-2xl hover:scale-[1.03] flex flex-col items-center text-center">
             <img
               src={employeeImg}
@@ -65,7 +65,7 @@ const LandingPage = () => {
             <Link to="/employeeRegister" className="w-full">
               <button
                 //   className="mt-6 bg-gradient-to-r from-[#FFB07F] via-[#FFA062] to-[#E08A44] text-white font-medium px-6 py-3 rounded-lg w-full transition-all hover:shadow-lg hover:brightness-110"
-                className="mt-6 bg-[#EE964B] text-white font-medium px-6 py-3 rounded-lg w-full transition-all hover:bg-[#d97b33] hover:shadow-lg cursor-pointer">
+                className="mt-6 bg-[#0d3b66] text-white font-medium px-6 py-3 rounded-lg w-full transition-all hover:bg-[#1a5a95] hover:shadow-lg cursor-pointer">
                 Find a Job →
               </button>
             </Link>
@@ -73,7 +73,6 @@ const LandingPage = () => {
         </div>
       </div>
 
-      <WhyLaborLadger />
       <Footer />
     </div>
   );
