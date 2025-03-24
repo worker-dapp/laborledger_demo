@@ -21,6 +21,8 @@ import EmployeeProfile from "./pages/EmployeeProfile";
 import EmployerJobPortal from "./pages/EmployerJobPortal";
 import ViewOpenContracts from "./pages/ViewOpenContracts";
 import DaoDashboard from "./pages/DaoDashboard";
+import ReviewCompletedContracts from "./pages/ReviewCompletedContracts";
+// import ReviewCompletedContracts from "./pages/ReviewCompletedContracts";
 
 const App = () => {
   return (
@@ -47,6 +49,8 @@ const App = () => {
         <Route path="/view-employees" element={<EmployerJobPortal />} />
         <Route path="/view-open-contracts" element={<ViewOpenContracts />} />
         <Route path="/dao" element={<DaoDashboard />} />
+        {/* <Route path="/review-completed-contracts" element={ReviewCompletedContracts />} /> */}
+        <Route path="/review-completed-contracts" element={<ReviewCompletedContracts />} />
       </Routes>
     </div>
   );
