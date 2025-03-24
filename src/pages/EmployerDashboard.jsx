@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Bell, CheckCircle, XCircle } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Bell, CheckCircle, XCircle, Wallet, Settings } from "lucide-react";
 import supabase from "../supabaseClient";
 import Navbar from "../components/Navbar";
 
@@ -8,29 +8,39 @@ const EmployerDashboard = () => {
   const [userName, setUserName] = useState("");
   const [showMessages, setShowMessages] = useState(false);
   const [unreviewedContracts, setUnreviewedContracts] = useState([]);
+  const [showWalletModal, setShowWalletModal] = useState(false);
+  const [walletInfo, setWalletInfo] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUser = () => {
-  const email = localStorage.getItem("userEmail");
-  if (email) {
-    setUserName(email.split("@")[0]);
-  }
-};
+    const fetchData = async () => {
+      const email = localStorage.getItem("userEmail");
+      if (email) {
+        setUserName(email.split("@")[0]);
 
-    const fetchUnreviewedContracts = async () => {
-      const { data, error } = await supabase
+        const { data, error } = await supabase
+          .from("wallets")
+          .select("*")
+          .eq("user_email", email)
+          .single();
+
+        if (!error && data) {
+          setWalletInfo(data);
+        }
+      }
+
+      const { data: contracts, error: contractError } = await supabase
         .from("contracts")
         .select("id, contracttitle, signers")
         .eq("status", "open")
         .eq("reviewed", false);
 
-      if (!error && data) {
-        setUnreviewedContracts(data);
+      if (!contractError && contracts) {
+        setUnreviewedContracts(contracts);
       }
     };
 
-    fetchUser();
-    fetchUnreviewedContracts();
+    fetchData();
   }, []);
 
   const handleReview = async (id) => {
@@ -47,32 +57,59 @@ const EmployerDashboard = () => {
   return (
     <div className="min-h-screen bg-[#FFFFFF] relative">
       <Navbar />
-      <div className="absolute top-4 right-6">
+
+      {/* Top-right: Icons */}
+      <div className="absolute top-4 right-6 flex items-center gap-4">
         <button
           onClick={() => setShowMessages(!showMessages)}
           className="relative p-2 rounded-full bg-orange-100 hover:bg-orange-200 transition"
         >
           <Bell className="text-orange-600" />
-{unreviewedContracts.length > 0 && (
-  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5">
-    {unreviewedContracts.length}
-  </span>
-)}
+          {unreviewedContracts.length > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5">
+              {unreviewedContracts.length}
+            </span>
+          )}
         </button>
-        {showMessages && (
-          <div className="absolute right-0 mt-2 w-80 bg-white shadow-lg rounded-lg p-4 z-10">
-            <h4 className="text-md font-semibold text-gray-900 mb-2">Unreviewed Contracts</h4>
-            {unreviewedContracts.length === 0 ? (
-              <p className="text-sm text-gray-600">No unreviewed contracts.</p>
-            ) : (
-              <ul className="space-y-3">
-                {unreviewedContracts.map((contract) => (
+
+        {/* Wallet */}
+        <button
+          onClick={() => setShowWalletModal(true)}
+          className="p-2 rounded-full bg-orange-100 hover:bg-orange-200 transition"
+        >
+          <Wallet className="text-orange-600" />
+        </button>
+
+        {/* DAO / Settings */}
+        <button
+          onClick={() => navigate("/dao")}
+          className="p-2 rounded-full bg-orange-100 hover:bg-orange-200 transition"
+        >
+          <Settings className="text-orange-600" />
+        </button>
+      </div>
+
+      {/* Notification Dropdown */}
+      {showMessages && (
+        <div className="absolute right-6 top-16 w-80 bg-white shadow-lg rounded-lg p-4 z-10">
+          <h4 className="text-md font-semibold text-gray-900 mb-2">
+            Unreviewed Contracts
+          </h4>
+          {unreviewedContracts.length === 0 ? (
+            <p className="text-sm text-gray-600">No unreviewed contracts.</p>
+          ) : (
+            <ul className="space-y-3">
+              {unreviewedContracts.map((contract) => {
+                const signerName =
+                  Array.isArray(contract.signers) && contract.signers.length > 0
+                    ? contract.signers[0]?.name || "Someone"
+                    : "Someone";
+                return (
                   <li key={contract.id} className="flex items-center justify-between">
                     <span className="text-sm text-gray-800 truncate">
-  {Array.isArray(contract.signers) && contract.signers.length > 0
-    ? `${contract.signers[0].name} has accepted the contract:`
-    : "Someone has accepted the contract:"} <strong>{contract.contracttitle}</strong>
-</span>
+                      {signerName} has accepted:{" "}
+                      <strong>{contract.contracttitle}</strong>
+                    </span>
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleReview(contract.id)}
@@ -81,62 +118,84 @@ const EmployerDashboard = () => {
                         <CheckCircle size={20} />
                       </button>
                       <button
-                        onClick={() => setUnreviewedContracts((prev) => prev.filter((c) => c.id !== contract.id))}
+                        onClick={() =>
+                          setUnreviewedContracts((prev) =>
+                            prev.filter((c) => c.id !== contract.id)
+                          )
+                        }
                         className="text-red-500 hover:text-red-700"
                       >
                         <XCircle size={20} />
                       </button>
                     </div>
                   </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
-      </div>
-      <div>
-        <div className="text-3xl text-center p-12">Welcome, {userName}!</div>
-        <div className="flex flex-wrap justify-center gap-12 p-12">
-          <Link
-            to="/new-job"
-            className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-gradient-to-b from-[#FAF0CA] to-white backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900"
-          >
-            Create New Contract
-          </Link>
-          <Link
-            to="/view-employees"
-            className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-gradient-to-b from-[#FAF0CA] to-white backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900"
-          >
-            Review Applications
-          </Link>
-          <Link
-            to="/view-open-contracts"
-            className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-gradient-to-b from-[#FAF0CA] to-white backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900"
-          >
-            View Open Contracts
-          </Link>
-          <Link
-            to="/new-job"
-            className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-gradient-to-b from-[#FAF0CA] to-white backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900"
-          >
-            Review Completed Contracts
-          </Link>
-          <Link
-            to="/dispute"
-            className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-gradient-to-b from-[#FAF0CA] to-white backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900"
-          >
-            View Ongoing Disputes
-          </Link>
-          <Link
-            to="/payments"
-            className="w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-gradient-to-b from-[#FAF0CA] to-white backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900"
-          >
-            View Closed Contracts
-          </Link>
+                );
+              })}
+            </ul>
+          )}
         </div>
+      )}
+
+      {/* Welcome */}
+      <div className="text-3xl text-center p-12">Welcome, {userName}!</div>
+
+      {/* Action Cards */}
+      <div className="flex flex-wrap justify-center gap-12 p-12">
+        {[
+          { to: "/new-job", label: "Create New Contract" },
+          { to: "/view-employees", label: "Review Applications" },
+          { to: "/view-open-contracts", label: "View Open Contracts" },
+          { to: "/review-completed-contracts", label: "Review Completed Contracts" },
+          { to: "/dispute", label: "View Ongoing Disputes" },
+          { to: "/payments", label: "View Closed Contracts" },
+        ].map(({ to, label }) => (
+          <Link key={to} to={to} className={cardClass}>
+            {label}
+          </Link>
+        ))}
       </div>
+
+      {/* Wallet Modal */}
+      {showWalletModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg p-6 w-96 shadow-xl">
+            <h2 className="text-2xl font-bold mb-4 text-gray-900">
+              Wallet Summary
+            </h2>
+            {walletInfo ? (
+              <>
+                <p className="text-md text-gray-700 mb-2">
+                  🧾 <strong>Wallet Address:</strong>{" "}
+                  {walletInfo.wallet_address?.slice(0, 6)}...
+                  {walletInfo.wallet_address?.slice(-4)}
+                </p>
+                <p className="text-lg mb-2">
+                  💰 <strong>Current Balance:</strong>{" "}
+                  <span className="text-green-700">
+                    ${parseFloat(walletInfo.usd_balance).toFixed(2)}
+                  </span>
+                </p>
+              </>
+            ) : (
+              <p className="text-red-500">No wallet connected or found.</p>
+            )}
+
+            <div className="flex justify-end mt-6">
+              <button
+                onClick={() => setShowWalletModal(false)}
+                className="px-4 py-2 rounded bg-orange-500 text-white hover:bg-orange-600 transition"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
+const cardClass =
+  "w-1/4 text-center p-10 rounded-2xl shadow-2xl font-medium text-2xl border border-gray-100 bg-gradient-to-b from-[#FAF0CA] to-white backdrop-blur-lg transition-all hover:shadow-2xl hover:scale-[1.03] text-gray-900";
 
 export default EmployerDashboard;

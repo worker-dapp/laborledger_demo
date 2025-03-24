@@ -8,20 +8,21 @@ const ViewOpenContracts = () => {
   const [filteredContracts, setFilteredContracts] = useState([]);
   const [searchTitle, setSearchTitle] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedContract, setSelectedContract] = useState(null);
+  const [ownerBalance, setOwnerBalance] = useState(null);
 
   useEffect(() => {
     const fetchContracts = async () => {
       const { data, error } = await supabase
         .from("contracts")
         .select("*")
-        .eq("status", "open"); // Only fetch open contracts
+        .eq("status", "open");
 
       if (error) {
         console.error("Error fetching open contracts:", error);
         return;
       }
 
-      // Process signers to calculate applicants
       const processed = (data || []).map((contract) => {
         let signers = [];
 
@@ -69,6 +70,23 @@ const ViewOpenContracts = () => {
     setFilteredContracts(updated);
   };
 
+  const handleViewDetails = async (contract) => {
+    setSelectedContract(contract);
+
+    const { data, error } = await supabase
+      .from("wallets")
+      .select("usd_balance")
+      .eq("user_email", contract.email)
+      .single();
+
+    if (error || !data) {
+      console.error("Failed to fetch wallet balance:", error);
+      setOwnerBalance("Unavailable");
+    } else {
+      setOwnerBalance(parseFloat(data.usd_balance).toFixed(2));
+    }
+  };
+
   return (
     <div className="relative min-h-screen p-6 bg-[#FFFFFF]">
 
@@ -103,8 +121,7 @@ const ViewOpenContracts = () => {
       {/* FILTER PANEL */}
       {showFilters && (
         <div
-          className="absolute top-20 left-6 w-64 bg-white p-4 rounded shadow-md border 
-                     transition-all"
+          className="absolute top-20 left-6 w-64 bg-white p-4 rounded shadow-md border transition-all"
           style={{ zIndex: 9999 }}
         >
           <h2 className="text-xl font-bold mb-4">Filters</h2>
@@ -157,12 +174,12 @@ const ViewOpenContracts = () => {
               <p className="text-sm text-[#0D3B66]">
                 <strong>Applicants:</strong> {contract.applicants}
               </p>
-              <Link
-                to={`/contracts/${contract.id}`}
+              <button
+                onClick={() => handleViewDetails(contract)}
                 className="mt-4 block w-full bg-[#EE964B] text-white px-4 py-2 rounded-full shadow-md text-center"
               >
                 View Details
-              </Link>
+              </button>
             </div>
           ))
         ) : (
@@ -171,6 +188,43 @@ const ViewOpenContracts = () => {
           </div>
         )}
       </div>
+
+      {/* MODAL FOR CONTRACT DETAILS */}
+      {selectedContract && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-lg p-6 w-[90%] max-w-xl relative">
+            <button
+              className="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-xl"
+              onClick={() => setSelectedContract(null)}
+            >
+              &times;
+            </button>
+
+            <h2 className="text-2xl font-bold text-[#EE964B] mb-4">
+              {selectedContract.contracttitle}
+            </h2>
+
+            <p><strong>Payment Rate:</strong> {selectedContract.paymentrate}</p>
+            <p><strong>Payment Frequency:</strong> {selectedContract.paymentfrequency}</p>
+            <p><strong>Location:</strong> {selectedContract.location}</p>
+            <p><strong>Status:</strong> {selectedContract.status}</p>
+            <p><strong>Applicants:</strong> {selectedContract.applicants}</p>
+            <p><strong>Owner Email:</strong> {selectedContract.email}</p>
+
+            <div className="mt-4 text-lg text-[#0D3B66]">
+              💰 <strong>Remaining Balance:</strong>{" "}
+              {ownerBalance !== null ? `$${ownerBalance}` : "Loading..."}
+            </div>
+
+            <button
+              className="mt-6 w-full bg-[#EE964B] text-white py-2 rounded-full shadow-md hover:bg-[#d97b33] transition"
+              onClick={() => setSelectedContract(null)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import supabase from "../supabaseClient";
+import { ethers } from "ethers";
 
 const WorkerOnboardingForm = () => {
   const location = useLocation();
@@ -77,8 +78,21 @@ const WorkerOnboardingForm = () => {
   const handleSubmit = async () => {
     setIsLoading(true);
     setErrorMsg("");
-
+  
     try {
+      // Step 1: Prompt MetaMask connection and sign
+      if (!window.ethereum) {
+        alert("Please install MetaMask to proceed.");
+        setIsLoading(false);
+        return;
+      }
+  
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = await provider.getSigner();
+      await signer.signMessage("Sign this message to confirm contract deployment on DAO Work Portal");
+  
+      // Step 2: Proceed with creating contract
       const newContract = {
         contracttitle: workerData.contractTitle,
         paymentfrequency: paymentFrequency,
@@ -96,50 +110,103 @@ const WorkerOnboardingForm = () => {
         contracttype: workerType,
         description: workerData.description,
       };
-
-      const { data, error } = await supabase
+  
+      const { data: contractData, error: contractError } = await supabase
         .from("contracts")
         .insert([newContract])
         .select();
-
-      if (error) {
-        console.error("Error creating contract:", error);
+  
+      if (contractError || !contractData || contractData.length === 0) {
+        console.error("Error creating contract:", contractError);
         setErrorMsg("Failed to create contract. Please try again.");
-      } else {
-        if (workerType === "Piece Rate Payment") {
-          alert(
-            "✅ Oracle deployed - 0x5FbDB2315678afecb367f032d93F642f64180aa3" +
-            "✅ Contract deployed - 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-          );
-        }
-
-        setWorkerData({
-          contractTitle: "",
-          firstName: "",
-          lastName: "",
-          email: "",
-          phone: "",
-          walletAddress: "",
-          location: "",
-          paymentRate: "",
-          milestones: [{ milestone: "", amount: "" }],
-          paymentFrequency: "",
-          description: "",
-        });
-        setPaymentFrequency("");
-        setSigners([{ name: "", walletAddress: "" }]);
-        setAcceptedTerms(false);
-
-        navigate("/view-employees");
+        return;
       }
+  
+      const newContractId = contractData[0].id;
+  
+      if (workerType === "Piece Rate Payment") {
+        alert(
+          "✅ Oracle deployed - 0x5FbDB2315678afecb367f032d93F642f64180aa3" +
+          "\n✅ Contract deployed - 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+        );
+      }
+  
+      // Step 3: Calculate total payment
+      let totalPayment = 0;
+      const rate = parseFloat(workerData.paymentRate);
+  
+      if (paymentFrequency === "Hourly") totalPayment = rate * 8;
+      else if (paymentFrequency === "Daily") totalPayment = rate * 1;
+      else if (paymentFrequency === "Weekly") totalPayment = rate * 5;
+  
+      const userEmail = localStorage.getItem("userEmail");
+  
+      const { data: walletData, error: walletFetchError } = await supabase
+        .from("wallets")
+        .select("usd_balance")
+        .eq("user_email", userEmail)
+        .single();
+  
+      if (walletFetchError || !walletData) {
+        console.error("Error fetching wallet:", walletFetchError);
+        setErrorMsg("Could not find wallet info.");
+        return;
+      }
+  
+      const currentBalance = parseFloat(walletData.usd_balance);
+      const remainingBalance = currentBalance - totalPayment;
+  
+      if (remainingBalance < 0) {
+        setErrorMsg("Insufficient balance in your wallet.");
+        return;
+      }
+  
+      const { error: updateWalletError } = await supabase
+        .from("wallets")
+        .update({
+          usd_balance: remainingBalance,
+          latest_contract_id: newContractId,
+        })
+        .eq("user_email", userEmail);
+  
+      if (updateWalletError) {
+        console.error("Error updating wallet:", updateWalletError);
+        setErrorMsg("Payment failed. Please try again.");
+        return;
+      }
+  
+      // Final confirmation
+      alert(`✅ Contract deployed successfully!\n📝 Signed on MetaMask\n💵 $${totalPayment.toFixed(2)} deducted.\n💰 Remaining Balance: $${remainingBalance.toFixed(2)}`);
+  
+      // Reset form
+      setWorkerData({
+        contractTitle: "",
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        walletAddress: "",
+        location: "",
+        paymentRate: "",
+        milestones: [{ milestone: "", amount: "" }],
+        paymentFrequency: "",
+        description: "",
+      });
+      setPaymentFrequency("");
+      setSigners([{ name: "", walletAddress: "" }]);
+      setAcceptedTerms(false);
+      navigate("/view-employees");
+  
     } catch (err) {
-      console.error("Unexpected error:", err);
-      setErrorMsg("Something went wrong. Please try again.");
+      console.error("MetaMask error or unexpected issue:", err);
+      setErrorMsg("MetaMask signature required to proceed.");
     } finally {
       setIsLoading(false);
     }
   };
-
+  
+  
+  
   // [Rendering code stays unchanged, so use your existing form JSX below this]
   return (
     <div className="bg-[#FFFFFF] p-10 flex justify-center items-center min-h-screen relative">

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import GetLocation from "../components/GetLocation";
 import supabase from "../supabaseClient";
+import { ethers } from "ethers";
 
 const MyJobDetails = () => {
   const { id } = useParams();
@@ -13,6 +14,7 @@ const MyJobDetails = () => {
   const [isPunchedIn, setIsPunchedIn] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState(null);
+  const [payerInfo, setPayerInfo] = useState(null);
 
   const handlePunch = () => {
     if (!locationFetched && !loading) {
@@ -50,11 +52,59 @@ const MyJobDetails = () => {
     }
   };
 
-  const handleSubmit = () => {
-    setShowModal(true);
-    const randomAmount = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
-    setPaymentAmount(randomAmount);
+  const handleSubmit = async () => {
+    try {
+      if (!window.ethereum) {
+        alert("MetaMask not detected!");
+        return;
+      }
+  
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = await provider.getSigner();
+  
+      await signer.signMessage("Confirm payout submission for your contract");
+  
+      // Show modal immediately
+      setShowModal(true);
+  
+      const tx = await signer.sendTransaction({
+        to: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+        value: ethers.parseEther("0.0"),
+        data: "0x",
+      });
+  
+      console.log("📡 Tx sent:", tx.hash);
+  
+      // Wait for confirmation in the background
+      tx.wait().then(async () => {
+        const { data, error } = await supabase
+          .from("wallets")
+          .select("user_email, initial_usd_balance, usd_balance")
+          .eq("latest_contract_id", contract.id)
+          .single();
+  
+        if (error || !data) {
+          console.error("Error fetching payer info by contract ID:", error);
+          setPayerInfo(null);
+          setPaymentAmount(null);
+          return;
+        }
+  
+        const amountPaid =
+          parseFloat(data.initial_usd_balance) - parseFloat(data.usd_balance);
+  
+        setPaymentAmount(amountPaid.toFixed(2));
+        setPayerInfo({ ...data, txHash: tx.hash });
+      });
+    } catch (err) {
+      console.error("MetaMask error or signature rejected:", err);
+      alert("Signature required to submit.");
+      setShowModal(false);
+    }
   };
+   
+  
 
   useEffect(() => {
     const fetchContract = async () => {
@@ -104,22 +154,17 @@ const MyJobDetails = () => {
         </p>
 
         <div className="flex justify-between">
-        <button
-          onClick={handlePunch}
-          className={`${
-            isPunchedIn
-              ? "bg-red-500 hover:bg-red-600"
-              : "bg-green-500 hover:bg-green-600"
-          } text-white font-bold py-2 px-8 rounded-xl transition`}
-          disabled={loading}
-        >
-          {loading
-            ? "Fetching..."
-            : isPunchedIn
-            ? "Punch Out"
-            : "Punch In"}
-        </button>
-
+          <button
+            onClick={handlePunch}
+            className={`${
+              isPunchedIn
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-green-500 hover:bg-green-600"
+            } text-white font-bold py-2 px-8 rounded-xl transition`}
+            disabled={loading}
+          >
+            {loading ? "Fetching..." : isPunchedIn ? "Punch Out" : "Punch In"}
+          </button>
 
           <button
             onClick={handlePunch}
@@ -184,14 +229,24 @@ const MyJobDetails = () => {
           <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
             <div className="bg-white rounded-2xl shadow-2xl p-10 w-[90%] max-w-md text-center">
               <h2 className="text-2xl font-bold mb-4">Validating GPS...</h2>
-              <p className="text-lg mb-6">
-                Your punches are validated and you will be paid{" "}
-                <span className="font-semibold text-green-600">
-                  ${paymentAmount}
-                </span>
-                .<br />
-                Check your wallet in about 5–10 mins.
-              </p>
+              {paymentAmount && payerInfo ? (
+                <p className="text-lg mb-6">
+                  ✅ Your punches are validated. <br />
+                  You’ve been paid{" "}
+                  <span className="font-semibold text-green-600">
+                    ${paymentAmount}
+                  </span>{" "}
+                  by{" "}
+                  <span className="font-semibold text-[#0D3B66]">
+                    {payerInfo.user_email}
+                  </span>
+                  .
+                  <br />
+                  Check your wallet in 5–10 mins.
+                </p>
+              ) : (
+                <p className="text-red-500">Unable to fetch payment info.</p>
+              )}
               <button
                 onClick={() => setShowModal(false)}
                 className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-xl"

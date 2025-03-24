@@ -20,6 +20,7 @@ import EmployerProfile from "./pages/EmployerProfile";
 import EmployeeProfile from "./pages/EmployeeProfile";
 import EmployerJobPortal from "./pages/EmployerJobPortal";
 import ViewOpenContracts from "./pages/ViewOpenContracts";
+import DaoDashboard from "./pages/DaoDashboard";
 
 const App = () => {
   return (
@@ -45,6 +46,7 @@ const App = () => {
         <Route path="/employee-profile" element={<EmployeeProfile />} />
         <Route path="/view-employees" element={<EmployerJobPortal />} />
         <Route path="/view-open-contracts" element={<ViewOpenContracts />} />
+        <Route path="/dao" element={<DaoDashboard />} />
       </Routes>
     </div>
   );
