@@ -264,6 +264,51 @@ const WorkerOnboardingForm = () => {
             />
           </div>
 
+          <div className="flex gap-4 mb-4">
+          <select
+            name="location"
+            className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
+            value={workerData.location}
+            onChange={handleChange}
+          >
+            <option value="">Location</option>
+            <option value="New York">New York</option>
+            <option value="Los Angeles">Los Angeles</option>
+            <option value="Chicago">Chicago</option>
+            <option value="Houston">Houston</option>
+            <option value="Phoenix">Phoenix</option>
+            <option value="Philadelphia">Philadelphia</option>
+            <option value="San Antonio">San Antonio</option>
+            <option value="San Diego">San Diego</option>
+            <option value="Dallas">Dallas</option>
+            <option value="San Jose">San Jose</option>
+            <option value="Austin">Austin</option>
+            <option value="Jacksonville">Jacksonville</option>
+            <option value="DC">DC</option>
+            <option value="Virginia">Virginia</option>
+            <option value="Washington">Washington</option>
+            <option value="Seattle">Seattle</option>
+            <option value="Boston">Boston</option>
+            <option value="Denver">Denver</option>
+            <option value="Baltimore">Baltimore</option>
+            <option value="Portland">Portland</option>
+            <option value="Las Vegas">Las Vegas</option>
+            <option value="Miami">Miami</option>
+            <option value="Atlanta">Atlanta</option>
+            <option value="New Orleans">New Orleans</option>
+            <option value="Detroit">Detroit</option>
+            <option value="Minneapolis">Minneapolis</option>
+            <option value="Orlando">Orlando</option>
+            <option value="Tampa">Tampa</option>
+            <option value="Charlotte">Charlotte</option>
+            <option value="Nashville">Nashville</option>
+            <option value="Indianapolis">Indianapolis</option>
+            <option value="Sacramento">Sacramento</option>
+            <option value="San Francisco">San Francisco</option>
+          </select>
+        </div>
+
+
           {/* Payment Details */}
           <h3 className="text-xl font-bold mb-3 mt-6">Payment Details</h3>
           <div className="mb-4">
