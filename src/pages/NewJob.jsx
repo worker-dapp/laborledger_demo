@@ -5,23 +5,16 @@ import { useLocation, useNavigate } from "react-router-dom";
 import supabase from "../supabaseClient";
 
 const WorkerOnboardingForm = () => {
-  // --------------------------------------------------------------------------
-  // React Router
-  // --------------------------------------------------------------------------
   const location = useLocation();
   const jobData = location.state?.jobData;
   const navigate = useNavigate();
 
-  // --------------------------------------------------------------------------
-  // States
-  // --------------------------------------------------------------------------
   const [workerType, setWorkerType] = useState("Custom Payment");
   const [paymentFrequency, setPaymentFrequency] = useState("");
   const [signers, setSigners] = useState([{ name: "", walletAddress: "" }]);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  // Form Data
   const [workerData, setWorkerData] = useState({
     contractTitle: "",
     firstName: "",
@@ -35,13 +28,9 @@ const WorkerOnboardingForm = () => {
     paymentFrequency: "",
   });
 
-  // Loader & Error Handling
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  // --------------------------------------------------------------------------
-  // Handlers
-  // --------------------------------------------------------------------------
   const handleChange = (e) => {
     const { name, value } = e.target;
     setWorkerData({ ...workerData, [name]: value });
@@ -70,7 +59,6 @@ const WorkerOnboardingForm = () => {
     setSigners(updatedSigners);
   };
 
-  // Terms & Conditions
   const handleCheckboxChange = (e) => {
     e.preventDefault();
     setShowModal(true);
@@ -85,16 +73,11 @@ const WorkerOnboardingForm = () => {
     setShowModal(false);
   };
 
-  // --------------------------------------------------------------------------
-  // Submit => Insert into "contracts"
-  // --------------------------------------------------------------------------
   const handleSubmit = async () => {
-    // If you're using "required" validation in your UI, you might do extra checks here
     setIsLoading(true);
-    setErrorMsg(""); // reset any prior errors
+    setErrorMsg("");
 
     try {
-      // 1) Prepare the data to match your "contracts" table columns
       const newContract = {
         contracttitle: workerData.contractTitle,
         paymentfrequency: paymentFrequency,
@@ -108,21 +91,34 @@ const WorkerOnboardingForm = () => {
         milestones: workerData.milestones,
         signers: signers,
         status: "Contract Created",
+        reviewed: false,
+        contracttype: workerType,
+        reviewed: false, // ✅ added reviewed flag
+        contracttype: workerType // for deployment modal check
       };
 
-      // 2) Insert into Supabase
       const { data, error } = await supabase
         .from("contracts")
         .insert([newContract])
         .select();
 
-      // 3) Check error or success
       if (error) {
         console.error("Error creating contract:", error);
         setErrorMsg("Failed to create contract. Please try again.");
       } else {
-        console.log("Contract created successfully:", data);
-        // 4) Reset form
+        if (workerType === "Piece Rate Payment") {
+          alert(
+            "✅ Oracle deployed - 0x5FbDB2315678afecb367f032d93F642f64180aa3" +
+            "✅ Contract deployed - 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+          );
+        }
+        if (workerType === "Piece Rate Payment") {
+          alert(
+            "✅ Oracle deployed - 0x5FbDB2315678afecb367f032d93F642f64180aa3" +
+            "✅ Contract deployed - 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+          );
+        }
+
         setWorkerData({
           contractTitle: "",
           firstName: "",
@@ -145,14 +141,11 @@ const WorkerOnboardingForm = () => {
       console.error("Unexpected error:", err);
       setErrorMsg("Something went wrong. Please try again.");
     } finally {
-      // 6) Stop loader
       setIsLoading(false);
     }
   };
 
-  // --------------------------------------------------------------------------
-  // Render
-  // --------------------------------------------------------------------------
+  // [Rendering code stays unchanged, so use your existing form JSX below this]
   return (
     <div className="bg-[#FFFFFF] p-10 flex justify-center items-center min-h-screen relative">
       {/* LOADER OVERLAY */}

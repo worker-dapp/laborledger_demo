@@ -13,11 +13,15 @@ const EmployeeDashboard = () => {
       if (error) {
         console.error("Error fetching contracts:", error);
       } else {
-        setContracts(data || []);
+        const filtered = (data || []).filter(
+          (contract) => contract.status?.toLowerCase() !== "open" && contract.status?.toLowerCase() !== "closed"
+        );
+        setContracts(filtered);
       }
     };
     fetchContracts();
   }, []);
+  
 
   return (
     <div className="min-h-screen bg-[#FFFFFF]">
