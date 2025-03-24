@@ -61,12 +61,18 @@ const JobDetails = () => {
     fetchContract();
   }, [id]);
 
+  const handleSignerChange = (index, field, value) => {
+    const updated = [...signers];
+    updated[index][field] = value;
+    setSigners(updated);
+  };
+
   const handleSubmit = async () => {
     if (!acceptedTerms) return;
 
     const { error } = await supabase
       .from("contracts")
-      .update({ status: "open" })
+      .update({ status: "open", signers })
       .eq("id", id);
 
     if (error) {
@@ -99,6 +105,7 @@ const JobDetails = () => {
         <h2 className="text-3xl font-bold text-center mb-6">Sign Contract</h2>
 
         <div className="space-y-6">
+          {/* Static Fields */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Contract Title</label>
             <input
@@ -155,6 +162,7 @@ const JobDetails = () => {
             />
           </div>
 
+          {/* Payment Details */}
           <h3 className="text-lg font-bold">Payment Details</h3>
 
           <div>
@@ -179,6 +187,7 @@ const JobDetails = () => {
             />
           </div>
 
+          {/* Editable Signers Section */}
           <h3 className="text-lg font-bold">Signers</h3>
           {signers.map((signer, index) => (
             <div key={index} className="flex gap-4">
@@ -187,22 +196,23 @@ const JobDetails = () => {
                 <input
                   type="text"
                   value={signer.name}
-                  className="w-full p-3 rounded-xl border bg-gray-100"
-                  readOnly
+                  onChange={(e) => handleSignerChange(index, "name", e.target.value)}
+                  className="w-full p-3 rounded-xl border bg-white"
                 />
               </div>
               <div className="w-full">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Wallet Address</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input
                   type="text"
                   value={signer.walletAddress}
-                  className="w-full p-3 rounded-xl border bg-gray-100"
-                  readOnly
+                  onChange={(e) => handleSignerChange(index, "walletAddress", e.target.value)}
+                  className="w-full p-3 rounded-xl border bg-white"
                 />
               </div>
             </div>
           ))}
 
+          {/* Terms */}
           <label className="flex items-center mt-4 space-x-2 text-sm text-gray-800">
             <input
               type="checkbox"
@@ -213,6 +223,7 @@ const JobDetails = () => {
             <span>I agree to terms and conditions</span>
           </label>
 
+          {/* Submit */}
           <button
             onClick={handleSubmit}
             disabled={!acceptedTerms}
