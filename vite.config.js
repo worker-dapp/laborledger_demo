@@ -10,10 +10,11 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       devOptions: {
-        enabled: true, 
+        enabled: true,
       },
+      includeAssets: ['logo.png'],
       manifest: {
-        name: "Lucid Ledger PWA",
+        name: "Lucid Ledger",
         short_name: "LucidLedger",
         description: "A Vite-powered Progressive Web App",
         theme_color: "#ffffff",
@@ -25,9 +26,30 @@ export default defineConfig({
             src: "/logo.png",
             sizes: "192x192",
             type: "image/png",
-          },
-        ],
+            purpose: "any maskable"
+          }
+        ]
       },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/api\./i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'api-cache',
+              networkTimeoutSeconds: 10,
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 // 24 hours
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          }
+        ]
+      }
     }),
   ],
 });
