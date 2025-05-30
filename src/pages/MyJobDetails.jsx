@@ -18,6 +18,8 @@ const MyJobDetails = () => {
   const [payerInfo, setPayerInfo] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [showNotifPanel, setShowNotifPanel] = useState(false);
+  const [rfidValue, setRfidValue] = useState(null);
+  const [scanning, setScanning] = useState(false);
 
   const handleDismissNotification = async (id) => {
     const { error } = await supabase.from("notifications").delete().eq("id", id);
@@ -26,6 +28,22 @@ const MyJobDetails = () => {
     } else {
       setNotifications((prev) => prev.filter((n) => n.id !== id));
     }
+  };
+
+  const handleScanRFID = async () => {
+    setScanning(true);
+    setRfidValue("⏳ Scanning for tag...");
+    try {
+      // Wait for 15 seconds before fetching
+      await new Promise((resolve) => setTimeout(resolve, 10000));
+      const res = await fetch("http://localhost:5001/rfid-scan");
+      const data = await res.json();
+      setRfidValue(`🎉 Scanned UID: ${data.uid}`);
+    } catch (err) {
+      console.error("Error fetching RFID:", err);
+      setRfidValue("❌ Failed to scan RFID.");
+    }
+    setScanning(false);
   };
   
 
@@ -88,7 +106,7 @@ const MyJobDetails = () => {
       tx.wait().then(async () => {
         const { data, error } = await supabase
           .from("wallets")
-          .select("user_email, initial_usd_balance, usd_balance")
+          .select("user_email,pay_for_job")
           .eq("latest_contract_id", contract.id)
           .single();
 
@@ -99,8 +117,7 @@ const MyJobDetails = () => {
           return;
         }
 
-        const amountPaid =
-          parseFloat(data.initial_usd_balance) - parseFloat(data.usd_balance);
+        const amountPaid = data.pay_for_job
 
         setPaymentAmount(amountPaid.toFixed(2));
         setPayerInfo({ ...data, txHash: tx.hash });
@@ -213,7 +230,6 @@ const MyJobDetails = () => {
             ) : (
               <p className="text-sm text-gray-500">No notifications</p>
             )}
-
           </div>
         )}
       </div>
@@ -232,22 +248,38 @@ const MyJobDetails = () => {
           <strong>Location :</strong> {contract.location}
         </p>
 
-        <div className="flex justify-between">
-          <button
-            onClick={handlePunch}
-            className={`${
-              isPunchedIn
-                ? "bg-red-500 hover:bg-red-600"
-                : "bg-green-500 hover:bg-green-600"
-            } text-white font-bold py-2 px-8 rounded-xl transition`}
-            disabled={loading}
-          >
-            {loading ? "Fetching..." : isPunchedIn ? "Punch Out" : "Punch In"}
-          </button>
+        <div className="flex flex-wrap gap-4 justify-between items-center mb-4">
+          <div className="flex gap-4">
+            <button
+              onClick={handlePunch}
+              className={`${
+                isPunchedIn
+                  ? "bg-red-500 hover:bg-red-600"
+                  : "bg-green-500 hover:bg-green-600"
+              } text-white font-bold py-2 px-6 rounded-xl transition`}
+              disabled={loading}
+            >
+              {loading ? "Fetching..." : isPunchedIn ? "Punch Out" : "Punch In"}
+            </button>
+
+            <button
+              onClick={handleScanRFID}
+              className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-6 rounded-xl transition"
+              disabled={scanning}
+            >
+              {scanning ? "Scanning..." : "Scan In"}
+            </button>
+          </div>
+
+          {rfidValue && (
+            <div className="text-sm text-gray-700">
+              <strong>RFID UID:</strong> {rfidValue}
+            </div>
+          )}
 
           <button
             onClick={handlePunch}
-            className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-8 rounded-xl transition"
+            className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-xl transition"
             disabled={loading}
           >
             Raise a dispute

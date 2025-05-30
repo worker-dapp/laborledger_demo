@@ -166,6 +166,7 @@ const WorkerOnboardingForm = () => {
         .update({
           usd_balance: remainingBalance,
           latest_contract_id: newContractId,
+          pay_for_job: totalPayment,
         })
         .eq("user_email", userEmail);
   
@@ -195,7 +196,7 @@ const WorkerOnboardingForm = () => {
       setPaymentFrequency("");
       setSigners([{ name: "", walletAddress: "" }]);
       setAcceptedTerms(false);
-      navigate("/view-employees");
+      navigate("/review-applications");
   
     } catch (err) {
       console.error("MetaMask error or unexpected issue:", err);

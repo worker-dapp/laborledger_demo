@@ -22,6 +22,7 @@ import EmployerJobPortal from "./pages/EmployerJobPortal";
 import ViewOpenContracts from "./pages/ViewOpenContracts";
 import DaoDashboard from "./pages/DaoDashboard";
 import ReviewCompletedContracts from "./pages/ReviewCompletedContracts";
+import ReviewApplications from "./pages/ReviewApplications";
 // import ReviewCompletedContracts from "./pages/ReviewCompletedContracts";
 
 const App = () => {
@@ -51,6 +52,7 @@ const App = () => {
         <Route path="/dao" element={<DaoDashboard />} />
         {/* <Route path="/review-completed-contracts" element={ReviewCompletedContracts />} /> */}
         <Route path="/review-completed-contracts" element={<ReviewCompletedContracts />} />
+        <Route path="/review-applications" element={<ReviewApplications />} />
       </Routes>
     </div>
   );

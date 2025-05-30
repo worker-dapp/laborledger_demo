@@ -143,7 +143,7 @@ const EmployerDashboard = () => {
       <div className="flex flex-wrap justify-center gap-12 p-12">
         {[
           { to: "/new-job", label: "Create New Contract" },
-          { to: "/view-employees", label: "Review Applications" },
+          { to: "/review-applications", label: "Review Applications" },
           { to: "/view-open-contracts", label: "View Open Contracts" },
           { to: "/review-completed-contracts", label: "Review Completed Contracts" },
           { to: "/dispute", label: "View Ongoing Disputes" },
