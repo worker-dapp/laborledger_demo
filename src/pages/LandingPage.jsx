@@ -2,8 +2,6 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
-import WhyLaborLadger from "../components/WhyLaborLadger";
-
 import employerImg from "../assets/employer.jpg";
 import employeeImg from "../assets/jobs.jpg";
 

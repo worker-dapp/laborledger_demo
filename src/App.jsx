@@ -23,12 +23,14 @@ import ViewOpenContracts from "./pages/ViewOpenContracts";
 import DaoDashboard from "./pages/DaoDashboard";
 import ReviewCompletedContracts from "./pages/ReviewCompletedContracts";
 import ReviewApplications from "./pages/ReviewApplications";
+import Job from "./pages/JOb";
 // import ReviewCompletedContracts from "./pages/ReviewCompletedContracts";
 
 const App = () => {
   return (
     <div>
       <Routes>
+        <Route path="*" element={<h1>404 - Not Found</h1>} />
         <Route path="/" element={<LandingPage />} />
         <Route path="/employeeRegister" element={<EmployeeRegister />} />
         <Route path="/employerRegister" element={<EmployerRegister />} />
@@ -50,6 +52,7 @@ const App = () => {
         <Route path="/view-employees" element={<EmployerJobPortal />} />
         <Route path="/view-open-contracts" element={<ViewOpenContracts />} />
         <Route path="/dao" element={<DaoDashboard />} />
+        <Route path="/job" element={<Job />} />
         {/* <Route path="/review-completed-contracts" element={ReviewCompletedContracts />} /> */}
         <Route path="/review-completed-contracts" element={<ReviewCompletedContracts />} />
         <Route path="/review-applications" element={<ReviewApplications />} />
