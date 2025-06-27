@@ -10,6 +10,10 @@ const WorkerOnboardingForm = () => {
   const jobData = location.state?.jobData;
   const navigate = useNavigate();
 
+  // Step management
+  const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 5;
+
   const [workerType, setWorkerType] = useState("Custom Payment");
   const [paymentFrequency, setPaymentFrequency] = useState("");
   const [signers, setSigners] = useState([{ name: "", walletAddress: "" }]);
@@ -73,6 +77,49 @@ const WorkerOnboardingForm = () => {
 
   const handleCloseModal = () => {
     setShowModal(false);
+  };
+
+  // Step navigation functions
+  const nextStep = () => {
+    if (currentStep < totalSteps) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  // Validation functions for each step
+  const validateStep1 = () => {
+    return workerData.contractTitle && workerData.description;
+  };
+
+  const validateStep2 = () => {
+    return workerData.firstName && workerData.email && workerData.phone;
+  };
+
+  const validateStep3 = () => {
+    return workerData.location && paymentFrequency;
+  };
+
+  const validateStep4 = () => {
+    if (workerType === "Milestone") {
+      return workerData.milestones.every(m => m.milestone && m.amount);
+    }
+    return workerData.paymentRate;
+  };
+
+  const canProceedToNext = () => {
+    switch (currentStep) {
+      case 1: return validateStep1();
+      case 2: return validateStep2();
+      case 3: return validateStep3();
+      case 4: return validateStep4();
+      default: return true;
+    }
   };
 
   const handleSubmit = async () => {
@@ -205,10 +252,380 @@ const WorkerOnboardingForm = () => {
       setIsLoading(false);
     }
   };
-  
-  
-  
-  // [Rendering code stays unchanged, so use your existing form JSX below this]
+
+  // Progress bar component
+  const ProgressBar = () => (
+    <div className="mb-8">
+      <div className="flex justify-between items-center mb-2">
+        <span className="text-sm font-medium text-gray-700">
+          Step {currentStep} of {totalSteps}
+        </span>
+        <span className="text-sm text-gray-500">
+          {Math.round((currentStep / totalSteps) * 100)}% Complete
+        </span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2">
+        <div 
+          className="bg-gradient-to-r from-[#FFB07F] via-[#FFA062] to-[#EE964B] h-2 rounded-full transition-all duration-300"
+          style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+        ></div>
+      </div>
+      <div className="flex justify-between mt-2 text-xs text-gray-500">
+        <span>Basic Info</span>
+        <span>Worker Details</span>
+        <span>Location & Payment</span>
+        <span>Payment Details</span>
+        <span>Review & Submit</span>
+      </div>
+    </div>
+  );
+
+  // Step 1: Basic Company Details
+  const renderStep1 = () => (
+    <div>
+      <h3 className="text-xl font-bold mb-3">Step 1: Basic Contract Information</h3>
+      
+      <input
+        type="text"
+        placeholder="Contract Title"
+        name="contractTitle"
+        className="w-full p-3 mb-4 rounded-xl shadow border border-gray-400 bg-white/80"
+        value={workerData.contractTitle}
+        onChange={handleChange}
+        disabled={Boolean(jobData?.title)}
+      />
+
+      <div className="mb-4">
+        <label className="block mb-2 text-lg">Contract Type</label>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() => setWorkerType("Custom Payment")}
+            className={`p-3 rounded-lg font-semibold ${
+              workerType === "Custom Payment"
+                ? "bg-[#EE964B] text-white"
+                : "bg-[#FAF0CA] text-[#0D3B66]"
+            }`}>
+            Custom Payment
+          </button>
+          <button
+            onClick={() => setWorkerType("Time Based")}
+            className={`p-3 rounded-lg font-semibold ${
+              workerType === "Time Based"
+                ? "bg-[#EE964B] text-white"
+                : "bg-[#FAF0CA] text-[#0D3B66]"
+            }`}>
+            Time Based
+          </button>
+          <button
+            onClick={() => setWorkerType("Piece Rate Payment")}
+            className={`p-3 rounded-lg font-semibold ${
+              workerType === "Piece Rate Payment"
+                ? "bg-[#EE964B] text-white"
+                : "bg-[#FAF0CA] text-[#0D3B66]"
+            }`}>
+            GPS Based
+          </button>
+          <button
+            onClick={() => setWorkerType("Milestone")}
+            className={`p-3 rounded-lg font-semibold ${
+              workerType === "Milestone"
+                ? "bg-[#EE964B] text-white"
+                : "bg-[#FAF0CA] text-[#0D3B66]"
+            }`}>
+            Milestone Based
+          </button>
+        </div>
+      </div>
+
+      <textarea
+        placeholder="Contract Description"
+        name="description"
+        className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
+        value={workerData.description}
+        onChange={handleChange}
+        rows={4}
+      />
+    </div>
+  );
+
+  // Step 2: Worker Information
+  const renderStep2 = () => (
+    <div>
+      <h3 className="text-xl font-bold mb-3">Step 2: Worker Information</h3>
+      
+      <div className="flex gap-4 mb-4">
+        <input
+          type="text"
+          placeholder="First Name"
+          name="firstName"
+          className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
+          value={workerData.firstName}
+          onChange={handleChange}
+        />
+        <input
+          type="text"
+          placeholder="Last Name"
+          name="lastName"
+          className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
+          value={workerData.lastName}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className="flex gap-4 mb-4">
+        <input
+          type="email"
+          placeholder="Email"
+          name="email"
+          className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
+          value={workerData.email}
+          onChange={handleChange}
+        />
+        <input
+          type="tel"
+          placeholder="Phone Number"
+          name="phone"
+          className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
+          value={workerData.phone}
+          onChange={handleChange}
+        />
+      </div>
+
+      <input
+        type="text"
+        placeholder="Wallet Address (Optional)"
+        name="walletAddress"
+        className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
+        value={workerData.walletAddress}
+        onChange={handleChange}
+      />
+    </div>
+  );
+
+  // Step 3: Location and Payment Frequency
+  const renderStep3 = () => (
+    <div>
+      <h3 className="text-xl font-bold mb-3">Step 3: Location and Payment Frequency</h3>
+      
+      <div className="mb-4">
+        <label className="block mb-2">Location</label>
+        <select
+          name="location"
+          className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
+          value={workerData.location}
+          onChange={handleChange}
+        >
+          <option value="">Select Location</option>
+          <option value="New York">New York</option>
+          <option value="Los Angeles">Los Angeles</option>
+          <option value="Chicago">Chicago</option>
+          <option value="Houston">Houston</option>
+          <option value="Phoenix">Phoenix</option>
+          <option value="Philadelphia">Philadelphia</option>
+          <option value="San Antonio">San Antonio</option>
+          <option value="San Diego">San Diego</option>
+          <option value="Dallas">Dallas</option>
+          <option value="San Jose">San Jose</option>
+          <option value="Austin">Austin</option>
+          <option value="Jacksonville">Jacksonville</option>
+          <option value="DC">DC</option>
+          <option value="Virginia">Virginia</option>
+          <option value="Washington">Washington</option>
+          <option value="Seattle">Seattle</option>
+          <option value="Boston">Boston</option>
+          <option value="Denver">Denver</option>
+          <option value="Baltimore">Baltimore</option>
+          <option value="Portland">Portland</option>
+          <option value="Las Vegas">Las Vegas</option>
+          <option value="Miami">Miami</option>
+          <option value="Atlanta">Atlanta</option>
+          <option value="New Orleans">New Orleans</option>
+          <option value="Detroit">Detroit</option>
+          <option value="Minneapolis">Minneapolis</option>
+          <option value="Orlando">Orlando</option>
+          <option value="Tampa">Tampa</option>
+          <option value="Charlotte">Charlotte</option>
+          <option value="Nashville">Nashville</option>
+          <option value="Indianapolis">Indianapolis</option>
+          <option value="Sacramento">Sacramento</option>
+          <option value="San Francisco">San Francisco</option>
+        </select>
+      </div>
+
+      <div className="mb-4">
+        <label className="block mb-2">Payment Frequency</label>
+        <select
+          value={paymentFrequency}
+          onChange={(e) => setPaymentFrequency(e.target.value)}
+          className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80">
+          <option value="">-- Select Frequency --</option>
+          <option value="Hourly">Hourly</option>
+          <option value="Daily">Daily</option>
+          <option value="Weekly">Weekly</option>
+        </select>
+      </div>
+    </div>
+  );
+
+  // Step 4: Payment Details
+  const renderStep4 = () => (
+    <div>
+      <h3 className="text-xl font-bold mb-3">Step 4: Payment Details</h3>
+      
+      {workerType === "Milestone" ? (
+        <>
+          {workerData.milestones.map((milestone, index) => (
+            <div key={index} className="flex gap-4 mb-4">
+              <input
+                type="text"
+                placeholder="Milestone Name"
+                value={milestone.milestone}
+                onChange={(e) =>
+                  handleMilestoneChange(index, "milestone", e.target.value)
+                }
+                className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
+              />
+              <input
+                type="text"
+                placeholder="Amount"
+                value={milestone.amount}
+                onChange={(e) =>
+                  handleMilestoneChange(index, "amount", e.target.value)
+                }
+                className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
+              />
+            </div>
+          ))}
+          <button
+            onClick={addMilestone}
+            className="w-full p-3 mb-3 rounded-xl shadow border border-gray-400 bg-white/80">
+            Add Milestone
+          </button>
+        </>
+      ) : (
+        <input
+          type="text"
+          placeholder="Payment Rate"
+          name="paymentRate"
+          className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
+          value={workerData.paymentRate}
+          onChange={handleChange}
+        />
+      )}
+
+      {/* Calculate contract payment based on the payment frequency and rate */}
+      {paymentFrequency && workerData.paymentRate && (
+        <p className="text-lg mt-4">
+          Total Payment:{" "}
+          {paymentFrequency === "Hourly"
+            ? `$${parseInt(workerData.paymentRate) * 8}/day`
+            : paymentFrequency === "Daily"
+            ? `$${parseInt(workerData.paymentRate) * 1}/day`
+            : paymentFrequency === "Weekly"
+            ? `$${parseInt(workerData.paymentRate) * 5}/week`
+            : ""}
+        </p>
+      )}
+
+      {/* Multi-Signature Contract */}
+      <h3 className="text-xl font-bold mb-2 mt-6">Add Signers</h3>
+      {signers.map((signer, index) => (
+        <div key={index} className="flex gap-4 mb-4">
+          <input
+            type="text"
+            placeholder="Full Name"
+            value={signer.name}
+            onChange={(e) =>
+              handleSignerChange(index, "name", e.target.value)
+            }
+            className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
+          />
+          <input
+            type="text"
+            placeholder="Wallet Address"
+            value={signer.walletAddress}
+            onChange={(e) =>
+              handleSignerChange(index, "walletAddress", e.target.value)
+            }
+            className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
+          />
+        </div>
+      ))}
+      <button
+        onClick={addSigner}
+        className="px-4 py-2 border border-gray-300 rounded text-[#EE964B]">
+        + Add Signer
+      </button>
+    </div>
+  );
+
+  // Step 5: Review and Submit
+  const renderStep5 = () => (
+    <div>
+      <h3 className="text-xl font-bold mb-3">Step 5: Review and Submit</h3>
+      
+      <div className="bg-gray-50 p-6 rounded-lg mb-6">
+        <h4 className="font-bold text-lg mb-4">Contract Summary</h4>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <p><strong>Contract Title:</strong> {workerData.contractTitle}</p>
+            <p><strong>Contract Type:</strong> {workerType}</p>
+            <p><strong>Description:</strong> {workerData.description}</p>
+            <p><strong>Worker Name:</strong> {workerData.firstName} {workerData.lastName}</p>
+            <p><strong>Email:</strong> {workerData.email}</p>
+            <p><strong>Phone:</strong> {workerData.phone}</p>
+          </div>
+          <div>
+            <p><strong>Location:</strong> {workerData.location}</p>
+            <p><strong>Payment Frequency:</strong> {paymentFrequency}</p>
+            <p><strong>Payment Rate:</strong> {workerData.paymentRate}</p>
+            <p><strong>Wallet Address:</strong> {workerData.walletAddress || 'Not provided'}</p>
+            <p><strong>Signers:</strong> {signers.length}</p>
+          </div>
+        </div>
+
+        {workerType === "Milestone" && (
+          <div className="mt-4">
+            <p><strong>Milestones:</strong></p>
+            <ul className="list-disc list-inside">
+              {workerData.milestones.map((milestone, index) => (
+                <li key={index}>{milestone.milestone}: ${milestone.amount}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      <h4 className="mt-6 text-lg">
+        This is an agreement between the employer and the employee
+      </h4>
+
+      {/* "I agree to terms and conditions" Checkbox */}
+      <label className="flex items-center mt-6 pb-5 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={acceptedTerms}
+          onClick={handleCheckboxChange}
+          className="mr-2 cursor-pointer"
+        />
+        I agree to terms and conditions
+      </label>
+    </div>
+  );
+
+  // Render current step
+  const renderCurrentStep = () => {
+    switch (currentStep) {
+      case 1: return renderStep1();
+      case 2: return renderStep2();
+      case 3: return renderStep3();
+      case 4: return renderStep4();
+      case 5: return renderStep5();
+      default: return renderStep1();
+    }
+  };
+
   return (
     <div className="bg-[#FFFFFF] p-10 flex justify-center items-center min-h-screen relative">
       {/* LOADER OVERLAY */}
@@ -216,7 +633,6 @@ const WorkerOnboardingForm = () => {
         <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50">
           <div className="p-4 bg-white rounded shadow">
             <p className="text-lg">Creating your contract...</p>
-            {/* You could add a spinner here, e.g. CSS spinner or library-based */}
           </div>
         </div>
       )}
@@ -227,6 +643,9 @@ const WorkerOnboardingForm = () => {
           Create the contract terms with this guided process
         </p>
 
+        {/* Progress Bar */}
+        <ProgressBar />
+
         {/* Optional error message display */}
         {errorMsg && (
           <div className="text-red-600 bg-red-100 p-3 mb-4 rounded">
@@ -234,271 +653,47 @@ const WorkerOnboardingForm = () => {
           </div>
         )}
 
-        {/* Full Form */}
+        {/* Current Step Content */}
         <div className="mt-4">
-          <h3 className="text-xl font-bold mb-3">General Info</h3>
-
-          <input
-            type="text"
-            placeholder="Contract Title"
-            name="contractTitle"
-            className="w-full p-3 mb-4 rounded-xl shadow border border-gray-400 bg-white/80"
-            value={workerData.contractTitle}
-            onChange={handleChange}
-            disabled={Boolean(jobData?.title)}
-          />
-
-          {/* Worker Type Selection */}
-          <p className="mb-2 text-lg">Contract Type</p>
-          <div className="flex justify-between mb-6">
-            <button
-              onClick={() => setWorkerType("Custom Payment")}
-              className={`p-3 rounded-lg font-semibold ${
-                workerType === "Custom Payment"
-                  ? "bg-[#EE964B] text-white"
-                  : "bg-[#FAF0CA] text-[#0D3B66]"
-              }`}>
-              Custom Payment
-            </button>
-            <button
-              onClick={() => setWorkerType("Time Based")}
-              className={`p-3 rounded-lg font-semibold ${
-                workerType === "Time Based"
-                  ? "bg-[#EE964B] text-white"
-                  : "bg-[#FAF0CA] text-[#0D3B66]"
-              }`}>
-              Time Based
-            </button>
-            <button
-              onClick={() => setWorkerType("Piece Rate Payment")}
-              className={`p-3 rounded-lg font-semibold ${
-                workerType === "Piece Rate Payment"
-                  ? "bg-[#EE964B] text-white"
-                  : "bg-[#FAF0CA] text-[#0D3B66]"
-              }`}>
-              GPS Based
-            </button>
-            <button
-              onClick={() => setWorkerType("Milestone")}
-              className={`p-3 rounded-lg font-semibold ${
-                workerType === "Milestone"
-                  ? "bg-[#EE964B] text-white"
-                  : "bg-[#FAF0CA] text-[#0D3B66]"
-              }`}>
-              Milestone Based
-            </button>
-          </div>
-
-          <div className="flex gap-4 mb-4">
-            <textarea
-              placeholder="Description"
-              name="description"
-              className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
-              value={workerData.description}
-              onChange={handleChange}
-              rows={4} // optional: controls visible height
-            />
-          </div>
-
-
-          {/* Worker Information */}
-          <div className="flex gap-4 mb-4">
-            <input
-              type="text"
-              placeholder="Full Name"
-              name="firstName"
-              className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
-              value={workerData.firstName}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="flex gap-4 mb-4">
-            <input
-              type="email"
-              placeholder="Email"
-              name="email"
-              className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
-              value={workerData.email}
-              onChange={handleChange}
-            />
-            <input
-              type="tel"
-              placeholder="Phone Number"
-              name="phone"
-              className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
-              value={workerData.phone}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="flex gap-4 mb-4">
-          <select
-            name="location"
-            className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
-            value={workerData.location}
-            onChange={handleChange}
-          >
-            <option value="">Location</option>
-            <option value="New York">New York</option>
-            <option value="Los Angeles">Los Angeles</option>
-            <option value="Chicago">Chicago</option>
-            <option value="Houston">Houston</option>
-            <option value="Phoenix">Phoenix</option>
-            <option value="Philadelphia">Philadelphia</option>
-            <option value="San Antonio">San Antonio</option>
-            <option value="San Diego">San Diego</option>
-            <option value="Dallas">Dallas</option>
-            <option value="San Jose">San Jose</option>
-            <option value="Austin">Austin</option>
-            <option value="Jacksonville">Jacksonville</option>
-            <option value="DC">DC</option>
-            <option value="Virginia">Virginia</option>
-            <option value="Washington">Washington</option>
-            <option value="Seattle">Seattle</option>
-            <option value="Boston">Boston</option>
-            <option value="Denver">Denver</option>
-            <option value="Baltimore">Baltimore</option>
-            <option value="Portland">Portland</option>
-            <option value="Las Vegas">Las Vegas</option>
-            <option value="Miami">Miami</option>
-            <option value="Atlanta">Atlanta</option>
-            <option value="New Orleans">New Orleans</option>
-            <option value="Detroit">Detroit</option>
-            <option value="Minneapolis">Minneapolis</option>
-            <option value="Orlando">Orlando</option>
-            <option value="Tampa">Tampa</option>
-            <option value="Charlotte">Charlotte</option>
-            <option value="Nashville">Nashville</option>
-            <option value="Indianapolis">Indianapolis</option>
-            <option value="Sacramento">Sacramento</option>
-            <option value="San Francisco">San Francisco</option>
-          </select>
+          {renderCurrentStep()}
         </div>
 
+        {/* Navigation Buttons */}
+        <div className="flex justify-between mt-8">
+          <button
+            onClick={prevStep}
+            className={`px-6 py-3 rounded-lg font-medium ${
+              currentStep === 1
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-gray-500 text-white hover:bg-gray-600"
+            }`}
+            disabled={currentStep === 1}>
+            Previous
+          </button>
 
-          {/* Payment Details */}
-          <h3 className="text-xl font-bold mb-3 mt-6">Payment Details</h3>
-          <div className="mb-4">
-            <label className="block mb-2">Payment Frequency</label>
-            <select
-              value={paymentFrequency}
-              onChange={(e) => setPaymentFrequency(e.target.value)}
-              className="w-full p-3 mb-3 rounded-xl shadow border border-gray-400 bg-white/80">
-              <option value="">-- Select Frequency --</option>
-              <option value="Hourly">Hourly</option>
-              <option value="Daily">Daily</option>
-              <option value="Weekly">Weekly</option>
-            </select>
-          </div>
-
-          {workerType === "Milestone" ? (
-            <>
-              {workerData.milestones.map((milestone, index) => (
-                <div key={index} className="flex gap-4 mb-4">
-                  <input
-                    type="text"
-                    placeholder="Milestone Name"
-                    value={milestone.milestone}
-                    onChange={(e) =>
-                      handleMilestoneChange(index, "milestone", e.target.value)
-                    }
-                    className="w-full p-3 mb-3 rounded-xl shadow border border-gray-400 bg-white/80"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Amount"
-                    value={milestone.amount}
-                    onChange={(e) =>
-                      handleMilestoneChange(index, "amount", e.target.value)
-                    }
-                    className="w-full p-3 mb-3 rounded-xl shadow border border-gray-400 bg-white/80"
-                  />
-                </div>
-              ))}
-              <button
-                onClick={addMilestone}
-                className="w-full p-3 mb-3 rounded-xl shadow border border-gray-400 bg-white/80">
-                Add Milestone
-              </button>
-            </>
+          {currentStep < totalSteps ? (
+            <button
+              onClick={nextStep}
+              className={`px-6 py-3 rounded-lg font-medium ${
+                canProceedToNext()
+                  ? "bg-gradient-to-r from-[#FFB07F] via-[#FFA062] to-[#EE964B] text-white hover:shadow-lg"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
+              disabled={!canProceedToNext()}>
+              Next
+            </button>
           ) : (
-            <input
-              type="text"
-              placeholder="Payment Rate"
-              name="paymentRate"
-              className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
-              value={workerData.paymentRate}
-              onChange={handleChange}
-            />
+            <button
+              onClick={handleSubmit}
+              className={`px-6 py-3 rounded-lg font-medium ${
+                acceptedTerms && !isLoading
+                  ? "bg-gradient-to-r from-[#FFB07F] via-[#FFA062] to-[#EE964B] text-white hover:shadow-lg"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
+              disabled={!acceptedTerms || isLoading}>
+              {isLoading ? "Creating Contract..." : "Submit Contract"}
+            </button>
           )}
-
-          {/* Calculate contract payment based on the payment frequency and rate */}
-          {paymentFrequency && workerData.paymentRate && (
-            <p className="text-lg mt-4">
-              Total Payment:{" "}
-              {paymentFrequency === "Hourly"
-                ? `$${parseInt(workerData.paymentRate) * 8}/day`
-                : paymentFrequency === "Daily"
-                ? `$${parseInt(workerData.paymentRate) * 1}/day`
-                : paymentFrequency === "Weekly"
-                ? `$${parseInt(workerData.paymentRate) * 5}/week`
-                : ""}
-            </p>
-          )}
-
-          {/* Multi-Signature Contract */}
-          <h3 className="text-xl font-bold mb-2 mt-6">Add Signers</h3>
-          {signers.map((signer, index) => (
-            <div key={index} className="flex gap-4 mb-4">
-              <input
-                type="text"
-                placeholder="Full Name"
-                value={signer.name}
-                onChange={(e) =>
-                  handleSignerChange(index, "name", e.target.value)
-                }
-                className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
-              />
-              <input
-                type="text"
-                placeholder="Wallet Address"
-                value={signer.walletAddress}
-                onChange={(e) =>
-                  handleSignerChange(index, "walletAddress", e.target.value)
-                }
-                className="w-full p-3 rounded-xl shadow border border-gray-400 bg-white/80"
-              />
-            </div>
-          ))}
-          <button
-            onClick={addSigner}
-            className="px-4 py-2 border border-gray-300 rounded  text-[#EE964B]">
-            + Add Signer
-          </button>
-
-          <h4 className="mt-6 text-lg">
-            This is an agreement between the employer and the employee
-          </h4>
-
-          {/* "I agree to terms and conditions" Checkbox */}
-          <label className="flex items-center mt-6 pb-5 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={acceptedTerms}
-              onClick={handleCheckboxChange}
-              className="mr-2 cursor-pointer"
-            />
-            I agree to terms and conditions
-          </label>
-
-          {/* Submit Button */}
-          <button
-            onClick={handleSubmit}
-            className="bg-gradient-to-r from-[#FFB07F] via-[#FFA062] to-[#EE964B] text-white font-medium px-6 py-3 rounded-lg w-full transition-all hover:shadow-lg hover:brightness-110"
-            disabled={!acceptedTerms || isLoading}>
-            Submit
-          </button>
         </div>
 
         {/* Modal (Shown when user clicks the "I agree" checkbox) */}

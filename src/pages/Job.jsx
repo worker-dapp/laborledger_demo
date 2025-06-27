@@ -40,10 +40,52 @@ export default function Job() {
     }));
   };
 
+  // Validation functions for each step
+  const validateStep1 = () => {
+    return formData.companyName && formData.jobTitle;
+  };
+
+  const validateStep2 = () => {
+    return formData.jobLocationType && formData.jobLocation;
+  };
+
+  const validateStep3 = () => {
+    return formData.JObType && formData.jobPay;
+  };
+
+  const validateStep4 = () => {
+    return formData.responsiblities && formData.skills;
+  };
+
+  const canProceedToNext = () => {
+    switch (step) {
+      case 1: return validateStep1();
+      case 2: return validateStep2();
+      case 3: return validateStep3();
+      case 4: return validateStep4();
+      default: return true;
+    }
+  };
+
+  const handleNext = () => {
+    if (step < totalSteps && canProceedToNext()) {
+      setStep(step + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted at step:", step);
-    alert("Form submitted");
+    console.log("Final form data:", formData);
+    alert("Form submitted successfully!");
+    // Here you would typically send the data to your backend
+    // For now, we'll just show an alert
   };
 
   const renderStep = () => {
@@ -71,14 +113,15 @@ export default function Job() {
         totalSteps={totalSteps}
       />
 
-      <form onSubmit={handleSubmit}>
+      {/* Remove the form wrapper to prevent premature submission */}
+      <div>
         {renderStep()}
 
         <div className="flex justify-between mt-4">
           {step > 1 && (
             <button
               type="button"
-              onClick={() => setStep(step - 1)}
+              onClick={handleBack}
               className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
             >
               Back
@@ -87,21 +130,27 @@ export default function Job() {
           {step < totalSteps ? (
             <button
               type="button"
-              onClick={() => setStep(step + 1)}
-              className="ml-auto px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              onClick={handleNext}
+              className={`ml-auto px-4 py-2 rounded ${
+                canProceedToNext()
+                  ? "bg-blue-600 text-white hover:bg-blue-700"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
+              disabled={!canProceedToNext()}
             >
               Next
             </button>
           ) : (
             <button
-              type="submit"
+              type="button"
+              onClick={handleSubmit}
               className="ml-auto px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
             >
               Submit
             </button>
           )}
         </div>
-      </form>
+      </div>
     </div>
   );
 }
