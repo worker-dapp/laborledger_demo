@@ -3,6 +3,8 @@ import StepIndicator from "../components/StepIndicator";
 import Step1 from "../Form/Step1";
 import Step2 from "../Form/Step2";
 import Step3 from "../Form/Step3";
+import Step4 from "../Form/Step4";
+import Step5 from "../Form/Step5";
 
 export default function Job() {
   const [step, setStep] = useState(1);
@@ -40,7 +42,8 @@ export default function Job() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Form submitted:\n" + JSON.stringify(formData, null, 2));
+    console.log("Form submitted at step:", step);
+    alert("Form submitted");
   };
 
   const renderStep = () => {
@@ -51,6 +54,10 @@ export default function Job() {
         return <Step2 formData={formData} handleChange={handleChange} />;
       case 3:
         return <Step3 formData={formData} handleChange={handleChange} />;
+      case 4:
+        return <Step4 formData={formData} handleChange={handleChange} />;
+      case 5:
+        return <Step5 formData={formData} handleChange={handleChange} />;
       default:
         return <div>Step {step}</div>;
     }

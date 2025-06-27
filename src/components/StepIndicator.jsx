@@ -25,6 +25,7 @@ export default function StepIndicator({ currentStep, onStepClick }) {
               {/* Circle */}
               <div className="flex flex-col items-center relative z-10">
                 <button
+                  type="button"  // <-- Added here to prevent form submit
                   onClick={() => onStepClick(stepNum)}
                   className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium
                     ${
