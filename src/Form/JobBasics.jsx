@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Step1 = ({ formData, handleChange }) => {
+const JobBasics = ({ formData, handleChange }) => {
   return (
     <div className="space-y-4">
       <div>
@@ -76,6 +76,7 @@ const Step1 = ({ formData, handleChange }) => {
         <input
           type="email"
           name="notificationEmail"
+          placeholder="Enter company’s email"
           value={formData.notificationEmail}
           className="w-full border rounded p-2"
         />
@@ -98,4 +99,4 @@ const Step1 = ({ formData, handleChange }) => {
   );
 };
 
-export default Step1;
+export default JobBasics;

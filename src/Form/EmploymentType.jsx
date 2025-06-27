@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Step2({ formData, handleChange }) {
+export default function EmploymentType({ formData, handleChange }) {
   const jobTypes = ["Full Time", "Part Time", "Temporary", "Contract", "Permanent (employee)"];
   const currencies = ["USD", "EUR", "GBP", "INR", "JPY"];
   const payFrequencies = ["hourly", "per day", "per week", "per month", "piece rate"];

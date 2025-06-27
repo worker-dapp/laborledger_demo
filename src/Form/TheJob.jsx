@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Step3({ formData, handleChange }) {
+export default function TheJob({ formData, handleChange }) {
   return (
     <div className="space-y-6">
       <div>

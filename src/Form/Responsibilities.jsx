@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Step4({ formData, handleChange }) {
+export default function Responsibilities({ formData, handleChange }) {
   const skillOptions = [
     "painting",
     "able to lift 50 lb",

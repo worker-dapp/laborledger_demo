@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import StepIndicator from "../components/StepIndicator";
-import Step1 from "../Form/Step1";
-import Step2 from "../Form/Step2";
-import Step3 from "../Form/Step3";
-import Step4 from "../Form/Step4";
-import Step5 from "../Form/Step5";
+import JobBasics from "../Form/JobBasics";
+import EmploymentType from "../Form/EmploymentType";
+import TheJob from "../Form/TheJob";
+import Responsibilities from "../Form/Responsibilities";
+import ContractFactory from "../Form/ContractFactory";
+import Navbar from "../components/Navbar";
 
 export default function Job() {
   const [step, setStep] = useState(1);
@@ -91,21 +92,23 @@ export default function Job() {
   const renderStep = () => {
     switch (step) {
       case 1:
-        return <Step1 formData={formData} handleChange={handleChange} />;
+        return <JobBasics formData={formData} handleChange={handleChange} />;
       case 2:
-        return <Step2 formData={formData} handleChange={handleChange} />;
+        return <EmploymentType formData={formData} handleChange={handleChange} />;
       case 3:
-        return <Step3 formData={formData} handleChange={handleChange} />;
+        return <TheJob formData={formData} handleChange={handleChange} />;
       case 4:
-        return <Step4 formData={formData} handleChange={handleChange} />;
+        return <Responsibilities formData={formData} handleChange={handleChange} />;
       case 5:
-        return <Step5 formData={formData} handleChange={handleChange} />;
+        return <ContractFactory formData={formData} handleChange={handleChange} />;
       default:
         return <div>Step {step}</div>;
     }
   };
 
   return (
+    <>
+    <Navbar />
     <div className="w-2/3 mx-auto m-10 p-10 bg-white rounded shadow-md">
       <StepIndicator
         currentStep={step}
@@ -152,5 +155,6 @@ export default function Job() {
         </div>
       </div>
     </div>
+    </>
   );
 }

@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Step5({ formData }) {
+export default function ContractFactory({ formData }) {
   const {
     companyName,
     jobTitle,

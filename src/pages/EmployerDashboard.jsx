@@ -59,7 +59,7 @@ const EmployerDashboard = () => {
       <Navbar />
 
       {/* Top-right: Icons */}
-      <div className="absolute top-4 right-6 flex items-center gap-4">
+      <div className="absolute top-32 right-6 flex items-center gap-4">
         <button
           onClick={() => setShowMessages(!showMessages)}
           className="relative p-2 rounded-full bg-orange-100 hover:bg-orange-200 transition"
@@ -142,7 +142,7 @@ const EmployerDashboard = () => {
       {/* Action Cards */}
       <div className="flex flex-wrap justify-center gap-12 p-12">
         {[
-          { to: "/new-job", label: "Create New Contract" },
+          { to: "/job", label: "Create New Contract" },
           { to: "/review-applications", label: "Review Applications" },
           { to: "/view-open-contracts", label: "View Open Contracts" },
           { to: "/review-completed-contracts", label: "Review Completed Contracts" },
