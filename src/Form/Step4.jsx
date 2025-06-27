@@ -28,33 +28,9 @@ export default function Step4({ formData, handleChange }) {
     });
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault(); // Prevent form submit on Enter without Shift
-    }
-  };
 
   return (
     <div className="space-y-6">
-      {/* Summary */}
-      <div>
-        <label className="block text-lg font-medium mb-2">
-          Summary <span className="text-sm text-gray-500">(Min. 100 characters)</span>
-        </label>
-        <textarea
-          name="summary"
-          value={formData.summary}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          className="w-full border p-3 rounded min-h-[100px]"
-          placeholder="Write a brief job summary..."
-        />
-        {formData.summary.length > 0 && formData.summary.length < 100 && (
-          <p className="text-red-500 text-sm mt-1">
-            Summary must be at least 100 characters.
-          </p>
-        )}
-      </div>
 
       {/* Responsibilities */}
       <div>
@@ -63,7 +39,6 @@ export default function Step4({ formData, handleChange }) {
           name="responsiblities"
           value={formData.responsiblities}
           onChange={handleChange}
-          onKeyDown={handleKeyDown}
           className="w-full border p-3 rounded min-h-[100px]"
           placeholder={`• Follow safety protocols\n• Maintain workspace\n• Collaborate with team members`}
         />
@@ -76,7 +51,6 @@ export default function Step4({ formData, handleChange }) {
           name="skills"
           value={formData.skills}
           onChange={handleChange}
-          onKeyDown={handleKeyDown}
           className="w-full border p-3 rounded min-h-[100px]"
           placeholder="List required qualifications and skills..."
         />
@@ -118,7 +92,6 @@ export default function Step4({ formData, handleChange }) {
           name="companyDescription"
           value={formData.companyDescription}
           onChange={handleChange}
-          onKeyDown={handleKeyDown}
           className="w-full border p-3 rounded min-h-[100px]"
           placeholder="Tell candidates about your company culture, mission, or values..."
         />

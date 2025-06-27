@@ -1,17 +1,24 @@
 import React from "react";
 
-export default function Step3({ formData }) {
+export default function Step3({ formData, handleChange }) {
   return (
     <div className="space-y-6">
-      {/* Instructional Text */}
-      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
-        <p className="text-md font-medium text-yellow-800">
-          Make sure your job ad gets the job done.
-        </p>
-        <p className="text-sm text-yellow-700 mt-1">
-          Enter your description into each section for best results.
-          The more complete the job ad, the better your responses.
-        </p>
+      <div>
+        <label className="block text-lg font-medium mb-2">
+          Summary <span className="text-sm text-gray-500">(Min. 100 characters)</span>
+        </label>
+        <textarea
+          name="summary"
+          value={formData.summary}
+          onChange={handleChange}
+          className="w-full border p-3 rounded min-h-[100px]"
+          placeholder="Write a brief job summary..."
+        />
+        {formData.summary.length > 0 && formData.summary.length < 100 && (
+          <p className="text-red-500 text-sm mt-1">
+            Summary must be at least 100 characters.
+          </p>
+        )}
       </div>
 
       {/* Summary Section */}
