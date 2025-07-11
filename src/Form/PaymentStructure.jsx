@@ -221,9 +221,9 @@ export default function PaymentStructure({ formData, handleChange }) {
         <label className="block text-lg font-medium mb-2">Job Type</label>
         <div className="flex flex-wrap gap-2">
           {jobTypes.map((type) => (
-            <button
+        <button
               key={type}
-              type="button"
+          type="button"
               onClick={() =>
                 handleChange({ target: { name: "JObType", value: type } })
               }
@@ -234,7 +234,7 @@ export default function PaymentStructure({ formData, handleChange }) {
               }`}
             >
               {type}
-            </button>
+        </button>
           ))}
         </div>
       </div>
@@ -278,7 +278,7 @@ export default function PaymentStructure({ formData, handleChange }) {
           className="w-full border p-2 rounded"
           placeholder="Enter pay amount"
         />
-      </div>
+        </div>
 
       {/* Currency */}
       <div>

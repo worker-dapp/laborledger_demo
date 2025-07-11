@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import StepIndicator from "../components/StepIndicator";
+import Navbar from "../components/Navbar";
 import JobBasics from "../Form/JobBasics";
-import EmploymentType from "../Form/EmploymentType";
-import TheJob from "../Form/TheJob";
+import PaymentStructure from "../Form/PaymentStructure";
+import JobDetails from "../Form/JobDetails";
+import OracleConfiguration from "../Form/OracleConfiguration";
 import Responsibilities from "../Form/Responsibilities";
 import ContractFactory from "../Form/ContractFactory";
-import Navbar from "../components/Navbar";
 
 export default function Job() {
   const [step, setStep] = useState(1);
-  const totalSteps = 5;
+  const totalSteps = 6;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -30,7 +31,17 @@ export default function Job() {
     summary: "",
     responsiblities: "",
     skills: "",
-    companyDescription: ""
+    companyDescription: "",
+    paymentType: "time-based",
+    expectedUnits: "",
+    milestoneCount: "",
+    expectedVolume: "",
+    customPaymentDesc: "",
+    selectedOracles: [],
+    oracleCost: 0,
+    verificationMethod: "",
+    manualVerification: false,
+    automatedVerification: false
   });
 
   const handleChange = (e) => {
@@ -47,14 +58,18 @@ export default function Job() {
   };
 
   const validateStep2 = () => {
-    return formData.jobLocationType && formData.jobLocation;
+    return formData.JObType && formData.jobPay && formData.paymentType;
   };
 
   const validateStep3 = () => {
-    return formData.JObType && formData.jobPay;
+    return formData.jobLocationType && formData.jobLocation && formData.summary;
   };
 
   const validateStep4 = () => {
+    return formData.selectedOracles && formData.selectedOracles.length > 0;
+  };
+
+  const validateStep5 = () => {
     return formData.responsiblities && formData.skills;
   };
 
@@ -64,6 +79,7 @@ export default function Job() {
       case 2: return validateStep2();
       case 3: return validateStep3();
       case 4: return validateStep4();
+      case 5: return validateStep5();
       default: return true;
     }
   };
@@ -94,12 +110,14 @@ export default function Job() {
       case 1:
         return <JobBasics formData={formData} handleChange={handleChange} />;
       case 2:
-        return <EmploymentType formData={formData} handleChange={handleChange} />;
+        return <PaymentStructure formData={formData} handleChange={handleChange} />;
       case 3:
-        return <TheJob formData={formData} handleChange={handleChange} />;
+        return <JobDetails formData={formData} handleChange={handleChange} />;
       case 4:
-        return <Responsibilities formData={formData} handleChange={handleChange} />;
+        return <OracleConfiguration formData={formData} handleChange={handleChange} />;
       case 5:
+        return <Responsibilities formData={formData} handleChange={handleChange} />;
+      case 6:
         return <ContractFactory formData={formData} handleChange={handleChange} />;
       default:
         return <div>Step {step}</div>;

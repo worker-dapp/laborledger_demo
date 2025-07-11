@@ -1,15 +1,14 @@
 import React from "react";
 
-export default function StepIndicator({ currentStep, onStepClick }) {
+export default function StepIndicator({ currentStep, onStepClick, totalSteps = 6 }) {
   const stepLabels = [
     "Job Basics",
-    "Employment Type",
-    "The Job",
+    "Payment Structure",
+    "Job Details",
+    "Oracle Configuration",
     "Responsibilities",
-    "Contract Factory",
+    "Contract Review"
   ];
-
-  const totalSteps = stepLabels.length;
 
   return (
     <div className="mb-8">
@@ -60,7 +59,7 @@ export default function StepIndicator({ currentStep, onStepClick }) {
       {/* Labels below */}
       <div className="mt-2 flex justify-between p-1">
         {stepLabels.map((label, i) => (
-          <div key={i} className="w-10 text-sm">
+          <div key={i} className="text-xs text-center flex-1 px-1">
             {label}
           </div>
         ))}
