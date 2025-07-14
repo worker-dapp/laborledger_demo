@@ -37,7 +37,7 @@ export default function Responsibilities({ formData, handleChange }) {
         <label className="block text-lg font-medium mb-2">Responsibilities</label>
         <textarea
           name="responsiblities"
-          value={formData.responsiblities}
+          value={formData.responsiblities || ""}
           onChange={handleChange}
           className="w-full border p-3 rounded min-h-[100px]"
           placeholder={`• Follow safety protocols\n• Maintain workspace\n• Collaborate with team members`}

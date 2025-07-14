@@ -1,35 +1,37 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import StepIndicator from "../components/StepIndicator";
 import JobBasics from "../Form/JobBasics";
 import EmploymentType from "../Form/EmploymentType";
-import TheJob from "../Form/TheJob";
 import Responsibilities from "../Form/Responsibilities";
+import TheJob from "../Form/TheJob"
 import ContractFactory from "../Form/ContractFactory";
 import Navbar from "../components/Navbar";
+import Oracles from "../Form/Oracles";
+import { SubmitJob } from "../components/SubmitJob";
 
 export default function Job() {
   const [step, setStep] = useState(1);
-  const totalSteps = 5;
+  const totalSteps = 6;
 
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    address: "",
-    city: "",
     jobTitle: "",
     jobLocationType: "",
     jobLocation: "",
     companyName: "",
-    notifications: "",
+    notificationEmail: "",
     referenceCode: "",
-    JObType: "",
+    JobType: "",
     jobPay: "",
+    currency: "",
+    payFrequency: "",
     additionalCompensation: "",
     employeeBenefits: "",
     summary: "",
+    selectedOracles: "",
+    verificationNotes: "",
     responsiblities: "",
     skills: "",
+    associatedSkills: "",
     companyDescription: ""
   });
 
@@ -51,10 +53,14 @@ export default function Job() {
   };
 
   const validateStep3 = () => {
-    return formData.JObType && formData.jobPay;
+    return formData.JobType && formData.jobPay;
   };
 
   const validateStep4 = () => {
+    return formData.selectedOracles;
+  };
+
+  const validateStep5 = () => {
     return formData.responsiblities && formData.skills;
   };
 
@@ -64,6 +70,7 @@ export default function Job() {
       case 2: return validateStep2();
       case 3: return validateStep3();
       case 4: return validateStep4();
+      case 5: return validateStep5();
       default: return true;
     }
   };
@@ -80,13 +87,14 @@ export default function Job() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted at step:", step);
-    console.log("Final form data:", formData);
-    alert("Form submitted successfully!");
-    // Here you would typically send the data to your backend
-    // For now, we'll just show an alert
+    const result = await SubmitJob(formData)
+    if(result.success){
+      alert("Contract Created")
+    }else {
+      alert("Failed to save Contract")
+    }
   };
 
   const renderStep = () => {
@@ -98,8 +106,10 @@ export default function Job() {
       case 3:
         return <TheJob formData={formData} handleChange={handleChange} />;
       case 4:
-        return <Responsibilities formData={formData} handleChange={handleChange} />;
+        return <Oracles formData={formData} handleChange={handleChange} />
       case 5:
+        return <Responsibilities formData={formData} handleChange={handleChange} />;
+      case 6:
         return <ContractFactory formData={formData} handleChange={handleChange} />;
       default:
         return <div>Step {step}</div>;

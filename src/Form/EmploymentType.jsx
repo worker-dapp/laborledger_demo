@@ -57,10 +57,10 @@ export default function EmploymentType({ formData, handleChange }) {
               key={type}
               type="button"
               onClick={() =>
-                handleChange({ target: { name: "JObType", value: type } })
+                handleChange({ target: { name: "JobType", value: type } })
               }
               className={`px-4 py-2 rounded border ${
-                formData.JObType === type
+                formData.JobType === type
                   ? "bg-blue-600 text-white"
                   : "bg-gray-100"
               }`}
@@ -111,7 +111,7 @@ export default function EmploymentType({ formData, handleChange }) {
             name="payFrequency"
             value={formData.payFrequency || ""}
             onChange={handleChange}
-            className="w-full border p-2 rounded"
+            className="w-full border rounded"
           >
             <option value="">Select Frequency</option>
             {payFrequencies.map((freq) => (

@@ -5,6 +5,7 @@ export default function StepIndicator({ currentStep, onStepClick }) {
     "Job Basics",
     "Employment Type",
     "The Job",
+    "Oracle Configuration",
     "Responsibilities",
     "Contract Factory",
   ];
